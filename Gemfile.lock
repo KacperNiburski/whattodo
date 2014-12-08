@@ -71,7 +71,6 @@ GEM
     fql (0.3.1)
       multi_json
     geocoder (1.1.8)
-    gmaps4rails (2.1.0)
     hashie (2.0.5)
     hike (1.2.3)
     hooves (0.7)
@@ -258,7 +257,6 @@ DEPENDENCIES
   font-awesome-rails
   fql
   geocoder
-  gmaps4rails
   hooves
   jbuilder (~> 1.2)
   jquery-rails

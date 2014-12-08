@@ -14,7 +14,6 @@
 //= require jquery-ui
 //= require jquery_ujs
 //= require underscore
-//= require gmaps/google
 //= require spin
 //= require_tree .
 
