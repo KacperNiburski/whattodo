@@ -1,5 +1,3 @@
-include Capybara::DSL
-
 module Scraper
   class NowMagazine
 
