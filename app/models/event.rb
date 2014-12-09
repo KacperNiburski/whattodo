@@ -1,5 +1,6 @@
 require 'open-uri'
 require 'time'
+require 'html/sanitizer'
 require_dependency 'scraper.rb'
 
 class Event < ActiveRecord::Base
@@ -132,6 +133,7 @@ class Event < ActiveRecord::Base
         categoryList = Event.findCats(desc)
         categoryList = ["Misc"] if categoryList == nil || categoryList == ""
         image = event['event']['logo'] != nil || event['event']['logo'] != "" ? event['event']['logo'] : "http://i.imgur.com/ixz8pZT.png?1"
+        desc = ActionView::Base.full_sanitizer.sanitize(desc).gsub("\n",'').gsub("\t", "").gsub("\r","").strip
 
         eventAll.push({
           name: name,
@@ -175,6 +177,7 @@ class Event < ActiveRecord::Base
         location = location == "" || location == nil ? "No address listed" : location + ", Toronto, ON, Canada"
         url = event["url"]
         desc = event["description"] || "No description"
+        desc = "No description" if desc.strip == "" 
         categoryList = Event.findCats(desc)
         categoryList = ["Misc"] if categoryList == nil || categoryList == ""
         longitude = event["longitude"]
@@ -185,6 +188,8 @@ class Event < ActiveRecord::Base
         rescue
           image = "http://i.imgur.com/ixz8pZT.png?1"
         end
+        desc = ActionView::Base.full_sanitizer.sanitize(desc).gsub("\n",'').gsub("\t", "").gsub("\r","").strip
+
         eventAll.push({
           name: name,
           url: url,
@@ -236,6 +241,7 @@ class Event < ActiveRecord::Base
         latitude = event["venue"] == nil ? nil : event['venue']['lat']
         longitude = event["venue"] == nil ? nil :event['venue']['lon']
         image = "http://i.imgur.com/ixz8pZT.png?1"
+        desc = ActionView::Base.full_sanitizer.sanitize(desc).gsub("\n",'').gsub("\t", "").gsub("\r","").strip
 
         eventAll.push({
           name: name,

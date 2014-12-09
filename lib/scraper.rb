@@ -102,8 +102,6 @@ module Scraper
       end
       @headless.start if !OS.mac? 
       eventAll = []
-      #  eventually each page needs to be changed by click so keep runnnnig that click until count is ten
-      #  someties node attachment error. so when that happens need to wait and rerun
       page = visit('/')
       count = 0
       while count <= 100
