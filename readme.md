@@ -7,4 +7,6 @@ whattodo
   -> /api/v1/today?access_token=XXXX&cat=Sport&limit=10
 
   - capybara-webkit cannot be installed on heroku. This is api for wheretoobee.
+  ->RAILS_ENV=production rake get_events:get_events
+  -> might need to reset config file of server
   
