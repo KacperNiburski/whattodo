@@ -81,7 +81,7 @@ class Event < ActiveRecord::Base
     count = 0
     data.each do |val|
       location = val.xpath("//entrydata[@name='Location']")[count].text
-      location = location == "" || location == nil ?  "Toronto, ON, Canada" : location + ', Toronto, ON, Canada'
+      location = location == "" || location == nil ?  "Toronto, Canada" : location + ', Toronto, Canada'
 
       price = val.xpath("//entrydata[@name='Admission']")[count].text == "" ? "Price not listed" : val.xpath("//entrydata[@name='Admission']")[count].text
       if price[/ - /]
@@ -162,7 +162,7 @@ class Event < ActiveRecord::Base
         price = event['event']["tickets"][0]["ticket"]["price"]
         price = price == "0.00" || price == nil ? "Free" : price
         location = event['event']["venue"]["address"] + event['event']["venue"]["address_2"]
-        location = location == "" || location == nil ? "No address listed" : location + ", Toronto, ON, Canada"
+        location = location == "" || location == nil ? "No address listed" : location + ", Toronto, Canada"
         url = event['event']["url"]
         desc = event['event']["description"] || "No description"
         categoryList = Event.findCats(desc)
@@ -209,7 +209,7 @@ class Event < ActiveRecord::Base
         timeEnd = event["stop_time"]
         price = 'Check listing url!'
         location = event["venue_address"]
-        location = location == "" || location == nil ? "No address listed" : location + ", Toronto, ON, Canada"
+        location = location == "" || location == nil ? "No address listed" : location + ", Toronto, Canada"
         url = event["url"]
         desc = event["description"] || "No description"
         desc = "No description" if desc.strip == "" 
@@ -268,7 +268,7 @@ class Event < ActiveRecord::Base
         price = event["fee"] != nil ? event["fee"]["amount"] : 0
         price = price == 0 || price == nil || price == "0" ? "Free" : price
         location = event["venue"] == nil ? "" : event["venue"]["address_1"]
-        location = location == "" || location == nil ? "No address listed" : location + ", Toronto, ON, Canada"
+        location = location == "" || location == nil ? "No address listed" : location + ", Toronto, Canada"
         url = event["event_url"]
         desc = event["description"] || "No description"
         categoryList = Event.findCats(desc)
@@ -336,7 +336,7 @@ class Event < ActiveRecord::Base
         price = price != nil || price != "Free" ? price : 'Free'
         price = 'Free' if price == nil
         name = event.css("strong.summary").text
-        location = event.css("strong.location").text
+        location = event.css("strong.location").text + ', Toronto, Canada'
         url = event.css('a').map{|a| a['href']}[0]
         description = "Music"
         image = "http://i.imgur.com/ixz8pZT.png?1"
@@ -378,7 +378,7 @@ class Event < ActiveRecord::Base
         url = 'http://blogto.com' + event.css('.event-name').css('a')[0]['href']
         name = event.css('.event-name').text()
         location = event.css('.event-address').text()
-        location = location== "" || location == nil ? 'Toronto, ON, Canada' : location + ', Toronto, ON, Canada'
+        location = location== "" || location == nil ? 'Toronto, Canada' : location + ', Toronto, Canada'
         dayTime = todaystr + " " + event.css('info-eventtime').text()
         descIncomplete = event.css('.event-summary').text()
         categoryList = Event.findCats(descIncomplete)
@@ -434,9 +434,9 @@ class Event < ActiveRecord::Base
         dayStart = matchReg[0] || "No start time specified"
         dayEnd = matchReg[1] || "No end time specified"
         location = event.css('.meta').text()[/Location:\s[A-z\s\']*/]
-        location = location== "" || location == nil ? 'Toronto, ON, Canada' : location[1..-1].sub(/\s+\Z/, "") + ', Toronto, ON, Canada'
+        location = location== "" || location == nil ? 'Toronto, Canada' : location[1..-1].sub(/\s+\Z/, "") + ', Toronto, Canada'
         # sub here used to remove whitespace
-        location = location[9..-1].sub(/\s+\Z/, "") + ' ,Toronto, ON, Canada'
+        location = location[9..-1].sub(/\s+\Z/, "") + ', Toronto, Canada'
         categoryList = Event.findCats(desc)
         categoryList = ["Misc"] if categoryList == nil || categoryList == ""
         image = if !event.css('.img-holder').css('img').empty?
@@ -481,7 +481,7 @@ class Event < ActiveRecord::Base
       url = event["url"]
       source = event["source"]
       location = event["location"]
-      location = location == "" || location == nil ? "No address listed" : location + ", Toronto, ON, Canada"
+      location = location == "" || location == nil ? "No address listed" : location + ", Toronto, Canada"
       desc = event["description"] || "No description"
       desc = ActionView::Base.full_sanitizer.sanitize(desc).gsub("\n",'').gsub("\t", "").gsub("\r","").strip
       categoryList = event['categories'].split(',')

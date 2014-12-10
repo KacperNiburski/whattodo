@@ -22,12 +22,12 @@ module Scraper
             locationAndDate = event.find('.event-info h3').text()
             #  checks if Dec. or something like that, so then know if Saturday or actual date for event
             if locationAndDate[/\./]
-              location = locationAndDate.split(/\d+\s/)[1] + ", Toronto, ON, Canada"
+              location = locationAndDate.split(/\d+\s/)[1] + ", Toronto, Canada"
               date = locationAndDate.scan(/.+\d+/)[0]
             else 
               locationAndDate = locationAndDate.split(/\s/)
               date = locationAndDate[0][0...-1]
-              location = locationAndDate[1..-1].join(" ") + ", Toronto, ON, Canada"
+              location = locationAndDate[1..-1].join(" ") + ", Toronto, Canada"
             end
 
             url = "http://www.clubcrawlers.com" + event.find('.hov')[:href]
@@ -61,12 +61,12 @@ module Scraper
           locationAndDate = event.css('.event-info h3').text()
           #  checks if Dec. or something like that, so then know if Saturday or actual date for event
           if locationAndDate[/\./]
-            location = locationAndDate.split(/\d+\s/)[1] + ", Toronto, ON, Canada"
+            location = locationAndDate.split(/\d+\s/)[1] + ", Toronto, Canada"
             date = locationAndDate.scan(/.+\d+/)[0]
           else 
             locationAndDate = locationAndDate.split(/\s/)
             date = locationAndDate[0][0...-1]
-            location = locationAndDate[1..-1].join(" ") + ", Toronto, ON, Canada"
+            location = locationAndDate[1..-1].join(" ") + ", Toronto, Canada"
           end
 
           url = "http://www.clubcrawlers.com" + event.css('.hov').attribute('href').value
@@ -111,7 +111,7 @@ module Scraper
           dayOn = splitedDate[0]
           dayEnd = splitedDate[1] || splitedDate[0]
           url = element.find('h4.event_title a')[:href]
-          location = element.all(:css, '.event_info a')[1].text() + ', Toronto, ON, Canada'
+          location = element.all(:css, '.event_info a')[1].text() + ', Toronto, Canada'
           desc = element.find('.description').text()[0..-8]
           price = desc[/\$\d+/] || "Free"
           categories = element.find('.cats span').text().split(/[\/\s,]/).reject!(&:empty?)
