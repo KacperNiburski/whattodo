@@ -293,6 +293,7 @@ class Event < ActiveRecord::Base
         dayTimeStart = event.css("strong.day").text + Time.parse(event.css("span.time").text).strftime("%I:%M %p")
         price = event.css("span.venue-meta").text[/\$\d+(\.\d+\s)?(-$\d+\.\d+)?[^All]+[\d+]/]
         price = price != nil || price != "Free" ? price : 'Free'
+        price = 'Free' if price == nil
         name = event.css("strong.summary").text
         location = event.css("strong.location").text
         url = event.css('a').map{|a| a['href']}[0]
@@ -428,6 +429,7 @@ class Event < ActiveRecord::Base
   end
 
   def self.elmcity
+    puts 'Running elmcity'
     string =  "http://elmcity.cloudapp.net/Toronto/json"
     data = JSON.parse((open(string)).read)
     eventAll = []
@@ -440,6 +442,7 @@ class Event < ActiveRecord::Base
       location = event["location"]
       location = location == "" || location == nil ? "No address listed" : location + ", Toronto, ON, Canada"
       desc = event["description"] || "No description"
+      desc = ActionView::Base.full_sanitizer.sanitize(desc).gsub("\n",'').gsub("\t", "").gsub("\r","").strip
       categoryList = event['categories'].split(',')
       categoryList = ["Misc"] if categoryList == nil || categoryList == "" || categoryList == " "
       image = "http://i.imgur.com/ixz8pZT.png?1"

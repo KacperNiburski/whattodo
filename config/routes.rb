@@ -11,6 +11,7 @@ Whattodo::Application.routes.draw do
       get '/create_token' => "events#create_token"
       resources :events
       get '/today' => "events#today"
+      get '/party' => 'events#partyEvents'
     end
   end
 

@@ -28,6 +28,12 @@ class API::V1::EventsController < ApplicationController
     respond_with @eventsToday
   end
 
+  def partyEvents
+    @eventsToday = uniqueEvents(getMatchingDayEvents).select{|event| event.source == "Nowmagazine" || event.source == "Club Crawlers" || event.source == "Just Shows"}
+    
+    respond_with @eventsToday
+  end
+
   private
 
   def restrict_access

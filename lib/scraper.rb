@@ -112,10 +112,11 @@ module Scraper
           dayEnd = splitedDate[1] || splitedDate[0]
           url = element.find('h4.event_title a')[:href]
           location = element.all(:css, '.event_info a')[1].text() + ', Toronto, ON, Canada'
-          desc = element.find('.description').text()
+          desc = element.find('.description').text()[0..-8]
           price = desc[/\$\d+/] || "Free"
           categories = element.find('.cats span').text().split(/[\/\s,]/).reject!(&:empty?)
           categories = ["Misc"] if categories == nil || categories == ""
+
           eventAll.push({
               name: name,
               url: url,
