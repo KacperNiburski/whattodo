@@ -22,14 +22,14 @@ class Event < ActiveRecord::Base
       e = Event.new(event)
       if e.latitude == nil || e.longitude == nil
         begin
-          sleep 0.25
           coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
           e.latitude, e.longitude = coords[0], coords[1]
+          sleep 0.25
         rescue
           url = URI.encode("http://nominatim.openstreetmap.org/search/"+e.location.gsub(',','')+"?format=json&addressdetails=1&limit=1")
           url = JSON.parse((open(url)).read)
           unless url == nil
-            coords = JSON.parse((open(url)).read)[0]
+            coords = url[0]
             e.latitude, e.longitude = coords["lat"].to_f, coords["lon"].to_f if coords != nil
           end
         end
@@ -46,14 +46,14 @@ class Event < ActiveRecord::Base
       e = Event.new(event)
       if e.latitude == nil || e.longitude == nil
         begin
-          sleep 0.25
           coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
           e.latitude, e.longitude = coords[0], coords[1]
+          sleep 0.25
         rescue
           url = URI.encode("http://nominatim.openstreetmap.org/search/"+e.location.gsub(',','')+"?format=json&addressdetails=1&limit=1")
           url = JSON.parse((open(url)).read)
           unless url == nil
-            coords = JSON.parse((open(url)).read)[0]
+            coords = url[0]
             e.latitude, e.longitude = coords["lat"].to_f, coords["lon"].to_f if coords != nil
           end
         end
@@ -64,12 +64,12 @@ class Event < ActiveRecord::Base
   end
 
   def self.getdata
-  	return [self.justshows,
-            self.cityhall,
-            self.eventbrite,
-            self.eventful,
-            self.meetup,
-            self.blogto
+  	return [self.justshows
+            # self.cityhall,
+            # self.eventbrite,
+            # self.eventful,
+            # self.meetup,
+            # self.blogto
   	].flatten
   end
 
@@ -311,14 +311,14 @@ class Event < ActiveRecord::Base
       e = Event.new(event)
       if e.latitude == nil || e.longitude == nil
         begin
-          sleep 0.25
           coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
           e.latitude, e.longitude = coords[0], coords[1]
+          sleep 0.25
         rescue
           url = URI.encode("http://nominatim.openstreetmap.org/search/"+e.location.gsub(',','')+"?format=json&addressdetails=1&limit=1")
           url = JSON.parse((open(url)).read)
           unless url == nil
-            coords = JSON.parse((open(url)).read)[0]
+            coords = url[0]
             e.latitude, e.longitude = coords["lat"].to_f, coords["lon"].to_f if coords != nil
           end
         end
