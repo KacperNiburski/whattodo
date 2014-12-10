@@ -272,7 +272,11 @@ class Event < ActiveRecord::Base
     arrEvents.each do |event|
       puts event
       e = Event.new(event)
-      e.geocode if e.latitude == nil || e.longitude == nil
+      if e.latitude == nil || e.longitude == nil
+        sleep 0.25
+        coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
+        e.latitude, e.longitude = coords[0], coords[1]
+      end
       e.save!
     end
   end
