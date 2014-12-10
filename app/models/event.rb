@@ -19,11 +19,26 @@ class Event < ActiveRecord::Base
      arrEvents.each do |event|
       puts event
       e = Event.new(event)
-      # if e.latitude == nil || e.longitude == nil
-      #   sleep 0.25
-      #   coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
-      #   e.latitude, e.longitude = coords[0], coords[1]
-      # end
+      if e.latitude == nil || e.longitude == nil
+        sleep 0.25
+        coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
+        e.latitude, e.longitude = coords[0], coords[1]
+      end
+      e.save!
+     end
+     writeToFile(arrEvents)
+  end
+
+  def self.createEventsTwo
+     arrEvents = Event.getdata_two
+     arrEvents.each do |event|
+      puts event
+      e = Event.new(event)
+      if e.latitude == nil || e.longitude == nil
+        sleep 0.25
+        coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
+        e.latitude, e.longitude = coords[0], coords[1]
+      end
       e.save!
      end
      writeToFile(arrEvents)
@@ -35,12 +50,15 @@ class Event < ActiveRecord::Base
             self.eventbrite,
             self.eventful,
             self.meetup,
-            self.nowmagazine,
-            self.blogto,
-            self.torontocom,
-            self.elmcity,
-            self.club_crawlers
+            self.blogto
   	].flatten
+  end
+
+  def self.getdata_two
+    return [self.nowmagazine,
+            self.torontocom,
+            self.elmcity
+          ].flatten
   end
 
   def self.cityhall
@@ -272,11 +290,11 @@ class Event < ActiveRecord::Base
     arrEvents.each do |event|
       puts event
       e = Event.new(event)
-      # if e.latitude == nil || e.longitude == nil
-      #   sleep 0.25
-      #   coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
-      #   e.latitude, e.longitude = coords[0], coords[1]
-      # end
+      if e.latitude == nil || e.longitude == nil
+        sleep 0.25
+        coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
+        e.latitude, e.longitude = coords[0], coords[1]
+      end
       e.save!
     end
   end

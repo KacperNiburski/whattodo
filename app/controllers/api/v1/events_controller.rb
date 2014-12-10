@@ -31,6 +31,7 @@ class API::V1::EventsController < ApplicationController
   def partyEvents
     @eventsToday = uniqueEvents(getMatchingDayEvents).select{|event| event.source == "Nowmagazine" || event.source == "Club Crawlers" || event.source == "Just Shows"}
     @eventsToday = @eventsToday.select{|event| event.categoryList.include?(params[:cat])} if params[:cat]
+    binding.pry
     respond_with @eventsToday
   end
 
