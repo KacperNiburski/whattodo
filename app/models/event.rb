@@ -1,13 +1,13 @@
 require 'open-uri'
 require 'time'
 require 'html/sanitizer'
+require 'geokit'
 require_dependency 'scraper.rb'
 
 class Event < ActiveRecord::Base
   include Scraper
 
 	geocoded_by :location
-	# after_validation :geocode, if: ->(obj){ obj.location.present? and obj.location_changed? and !obj.latitude.nil? and !obj.longitude.nil? }
 
   def self.writeToFile(events)
     puts 'Writing to File'
@@ -19,7 +19,11 @@ class Event < ActiveRecord::Base
      arrEvents.each do |event|
       puts event
       e = Event.new(event)
-      e.geocode if e.latitude == nil || e.longitude == nil
+      if e.latitude == nil || e.longitude == nil
+        sleep 0.25
+        coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
+        e.latitude, e.longitude = coords[0], coords[1]
+      end
       e.save!
      end
      writeToFile(arrEvents)

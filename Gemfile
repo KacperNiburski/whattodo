@@ -32,6 +32,7 @@ gem 'headless'
 # Forms
 gem 'figaro'
 gem "rspec-rails"
+gem 'geokit'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 
