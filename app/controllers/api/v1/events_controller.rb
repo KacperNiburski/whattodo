@@ -24,6 +24,7 @@ class API::V1::EventsController < ApplicationController
     
     @eventsToday = @eventsToday.select{|event| event.categoryList.include?(params[:cat])} if params[:cat]
     @eventsToday = @eventsToday[0..params[:limit].to_i] if params[:limit]
+    @eventsToday = @eventsToday.select{|event| event.latitude != nil }
 
     respond_with @eventsToday
   end
@@ -31,7 +32,8 @@ class API::V1::EventsController < ApplicationController
   def partyEvents
     @eventsToday = uniqueEvents(getMatchingDayEvents).select{|event| event.source == "Nowmagazine" || event.source == "Club Crawlers" || event.source == "Just Shows"}
     @eventsToday = @eventsToday.select{|event| event.categoryList.include?(params[:cat])} if params[:cat]
-    binding.pry
+    @eventsToday = @eventsToday.select{|event| event.latitude != nil }
+    
     respond_with @eventsToday
   end
 
