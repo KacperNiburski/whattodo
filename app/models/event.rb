@@ -16,27 +16,60 @@ class Event < ActiveRecord::Base
   end
 
   def self.createEvents
-     arrEvents = Event.getdata
-     arrEvents.each do |event|
+    arrEvents = Event.getdata
+    arrEvents.each do |event|
       puts event
       e = Event.new(event)
-      if e.latitude == nil || e.longitude == nil
-        begin
-          coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
-          e.latitude, e.longitude = coords[0], coords[1]
-          sleep 0.25
-        rescue
-          url = URI.encode("http://nominatim.openstreetmap.org/search/"+e.location.gsub(',','')+"?format=json&addressdetails=1&limit=1")
-          url = JSON.parse((open(url)).read)
-          unless url == nil
-            coords = url[0]
-            e.latitude, e.longitude = coords["lat"].to_f, coords["lon"].to_f if coords != nil
+      unless e.location == "No address listed"
+        if e.latitude == nil || e.longitude == nil 
+          begin
+            coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
+            e.latitude, e.longitude = coords[0], coords[1]
+          rescue
+            fragment = e.location.gsub(',','').gsub('/','')
+            if fragment.scan(/Toronto/).length >= 2
+              fragment = fragment.split('Toronto',-1)[0]
+            else
+              fragment = fragment
+            end
+            url = URI.encode("http://nominatim.openstreetmap.org/search/" + fragment +"?format=json&addressdetails=1&limit=1")
+            unless url == nil || url == " " || url == ''
+              url = JSON.parse((open(url)).read)
+              coords = url[0]
+              e.latitude, e.longitude = coords["lat"].to_f, coords["lon"].to_f if coords != nil
+            end
+          end
+        end
+        
+        if e.latitude == nil
+          here_key = Figaro.env.here_key
+          here_secret = Figaro.env.here_secret
+          string = "http://geocoder.cit.api.here.com/6.2/geocode.json?app_id=" + here_key+ "&app_code=" + here_secret +"&gen=8&searchtext=" + e.location.gsub(' ', '+').gsub(',', '')
+          begin
+            coords = JSON.parse((open(string)).read)
+          rescue
+            string = URI.encode(string)
+            coords = JSON.parse((open(string)).read)
+          end
+          unless coords == nil || coords["Response"]["View"].length == 0
+            coords = coords["Response"]["View"][0]["Result"][0]["Location"]["DisplayPosition"]
+            e.latitude, e.longitude = coords['Latitude'], coords['Longitude']
+          end
+        end
+        if e.latitude == nil
+          string = "https://api.geocod.io/v1/geocode?q=" + e.location.gsub('-','').gsub(',','').gsub('(','').gsub(')','').gsub(' ', '+') + "&api_key=cf88885cb459801b5a1b52aac3c89531b584934"
+          begin
+            coords = JSON.parse((open(string)).read)
+            unless coords == nil || coords['results'] == []
+              e.latitude, e.longitude = coords['results'][0]['location']['lat'], coords['results'][0]['location']['lng']
+            end
+          rescue
           end
         end
       end
       e.save!
-     end
-     writeToFile(arrEvents)
+    end
+    writeToFile(arrEvents)
   end
 
   def self.createEventsTwo
