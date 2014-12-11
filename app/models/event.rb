@@ -81,11 +81,16 @@ class Event < ActiveRecord::Base
         begin
           coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
           e.latitude, e.longitude = coords[0], coords[1]
-          sleep 0.25
         rescue
-          url = URI.encode("http://nominatim.openstreetmap.org/search/"+e.location.gsub(',','')+"?format=json&addressdetails=1&limit=1")
-          url = JSON.parse((open(url)).read)
-          unless url == nil
+          fragment = e.location.gsub(',','').gsub('/','')
+          if fragment.scan(/Toronto/).length >= 2
+            fragment.split('Toronto',-1)[0]
+          else
+            fragment = fragment
+          end
+          url = URI.encode("http://nominatim.openstreetmap.org/search/" + fragment +"?format=json&addressdetails=1&limit=1")
+          unless url == nil || url == " " || url == ''
+            url = JSON.parse((open(url)).read)
             coords = url[0]
             e.latitude, e.longitude = coords["lat"].to_f, coords["lon"].to_f if coords != nil
           end
@@ -346,11 +351,16 @@ class Event < ActiveRecord::Base
         begin
           coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
           e.latitude, e.longitude = coords[0], coords[1]
-          sleep 0.25
         rescue
-          url = URI.encode("http://nominatim.openstreetmap.org/search/"+e.location.gsub(',','')+"?format=json&addressdetails=1&limit=1")
-          url = JSON.parse((open(url)).read)
-          unless url == nil
+          fragment = e.location.gsub(',','').gsub('/','')
+          if fragment.scan(/Toronto/).length >= 2
+            fragment.split('Toronto',-1)[0]
+          else
+            fragment = fragment
+          end
+          url = URI.encode("http://nominatim.openstreetmap.org/search/" + fragment +"?format=json&addressdetails=1&limit=1")
+          unless url == nil || url == " " || url == ''
+            url = JSON.parse((open(url)).read)
             coords = url[0]
             e.latitude, e.longitude = coords["lat"].to_f, coords["lon"].to_f if coords != nil
           end
