@@ -43,7 +43,7 @@ class Event < ActiveRecord::Base
         if e.latitude == nil
           here_key = Figaro.env.here_key
           here_secret = Figaro.env.here_secret
-          string = "http://geocoder.cit.api.here.com/6.2/geocode.json?app_id=" + here_key+ "&app_code=" + here_secret +"&gen=8&searchtext=" + e.location.gsub(' ', '+').gsub(',', '')
+          string = "http://geocoder.cit.api.here.com/6.2/geocode.json?app_id=" + here_key + "&app_code=" + here_secret +"&gen=8&searchtext=" + e.location.gsub(' ', '+').gsub(',', '')
           begin
             coords = JSON.parse((open(string)).read)
           rescue
@@ -340,7 +340,7 @@ class Event < ActiveRecord::Base
       pageEvents = Nokogiri::HTML(open(string+'?p='+pageCount.to_s)).css('ul.shows li')
 
       pageEvents.each do |event|
-        dayTimeStart = event.css("strong.day").text + Time.parse(event.css("span.time").text).strftime("%I:%M %p")
+        dayTimeStart = event.css("strong.day").text + " " + Time.parse(event.css("span.time").text).strftime("%I:%M %p")
         price = event.css("span.venue-meta").text[/\$\d+(\.\d+\s)?(-$\d+\.\d+)?[^All]+[\d+]/]
         price = price != nil || price != "Free" ? price : 'Free'
         price = 'Free' if price == nil
