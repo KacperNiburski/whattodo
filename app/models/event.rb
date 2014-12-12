@@ -15,8 +15,7 @@ class Event < ActiveRecord::Base
     File.open('eventsseedfile.txt', 'w') { |file| file.write(events) }
   end
 
-  def self.createEvents
-    arrEvents = Event.getdata
+  def self.callCreation(arrEvents)
     arrEvents.each do |event|
       puts event
       e = Event.new(event)
@@ -72,33 +71,14 @@ class Event < ActiveRecord::Base
     writeToFile(arrEvents)
   end
 
+  def self.createEvents
+    arrEvents = Event.getdata
+    Event.callCreation(arrEvents)
+  end
+
   def self.createEventsTwo
      arrEvents = Event.getdata_two
-     arrEvents.each do |event|
-      puts event
-      e = Event.new(event)
-      if e.latitude == nil || e.longitude == nil
-        begin
-          coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
-          e.latitude, e.longitude = coords[0], coords[1]
-        rescue
-          fragment = e.location.gsub(',','').gsub('/','')
-          if fragment.scan(/Toronto/).length >= 2
-            fragment.split('Toronto',-1)[0]
-          else
-            fragment = fragment
-          end
-          url = URI.encode("http://nominatim.openstreetmap.org/search/" + fragment +"?format=json&addressdetails=1&limit=1")
-          unless url == nil || url == " " || url == ''
-            url = JSON.parse((open(url)).read)
-            coords = url[0]
-            e.latitude, e.longitude = coords["lat"].to_f, coords["lon"].to_f if coords != nil
-          end
-        end
-      end
-      e.save!
-     end
-     writeToFile(arrEvents)
+     Event.callCreation(arrEvents)
   end
 
   def self.getdata
@@ -344,30 +324,7 @@ class Event < ActiveRecord::Base
 
   def self.club_crawler_create
     arrEvents = Event.club_crawlers
-    arrEvents.each do |event|
-      puts event
-      e = Event.new(event)
-      if e.latitude == nil || e.longitude == nil
-        begin
-          coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
-          e.latitude, e.longitude = coords[0], coords[1]
-        rescue
-          fragment = e.location.gsub(',','').gsub('/','')
-          if fragment.scan(/Toronto/).length >= 2
-            fragment.split('Toronto',-1)[0]
-          else
-            fragment = fragment
-          end
-          url = URI.encode("http://nominatim.openstreetmap.org/search/" + fragment +"?format=json&addressdetails=1&limit=1")
-          unless url == nil || url == " " || url == ''
-            url = JSON.parse((open(url)).read)
-            coords = url[0]
-            e.latitude, e.longitude = coords["lat"].to_f, coords["lon"].to_f if coords != nil
-          end
-        end
-      end
-      e.save!
-    end
+    Event.callCreation(arrEvents)
   end
 
   def self.justshows
