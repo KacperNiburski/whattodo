@@ -1,11 +1,8 @@
-<<<<<<< HEAD
 include Capybara::DSL
 
 require 'headless'
 require 'os'
 
-=======
->>>>>>> production
 module Scraper
   class NowMagazine
 
