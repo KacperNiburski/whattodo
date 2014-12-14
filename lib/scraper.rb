@@ -38,9 +38,9 @@ module Scraper
                 url: url,
                 location: location,
                 price: 'Price not listed',
-                dayOn: date,
-                dayEnd: date,
-                desc: 'A night to be remembered',
+                dayOn: Date.today,
+                dayEnd: Date.today,
+                desc: locationAndDate.join(' '),
                 categoryList: ["Party"],
                 source: "Club Crawlers"
               })
@@ -77,9 +77,9 @@ module Scraper
             url: url,
             location: location,
             price: 'Price not listed',
-            dayOn: date,
-            dayEnd: date,
-            desc: 'A night to be remembered',
+            dayOn: Date.today,
+            dayEnd: Date.today,
+            desc: locationAndDate.join(' '),
             categoryList: ["Party"],
             source: "Club Crawlers"
           })

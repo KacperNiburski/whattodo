@@ -66,6 +66,8 @@ class Event < ActiveRecord::Base
           end
         end
       end
+      e.uuid = SecureRandom.uuid
+      
       e.save!
     end
     writeToFile(arrEvents)

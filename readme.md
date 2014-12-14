@@ -15,4 +15,5 @@ whattodo
 
   -> needs wrapper
 
-  
+-> parsing event time in desc.
+-> look for other events and how to make them look good for party people.
