@@ -24,6 +24,7 @@ class Event < ActiveRecord::Base
           begin
             coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
             e.latitude, e.longitude = coords[0], coords[1]
+            puts 'enter google'
           rescue
             fragment = e.location.gsub(',','').gsub('/','')
             if fragment.scan(/Toronto/).length >= 2
@@ -31,19 +32,57 @@ class Event < ActiveRecord::Base
             else
               fragment = fragment
             end
-            url = URI.encode("http://nominatim.openstreetmap.org/search/" + fragment +"?format=json&addressdetails=1&limit=1")
+            url = URI.encode("http://nominatim.openstreetmap.org/search/" + fragment +"?format=json&addressdetails=1&limit=1")            
+
             unless url == nil || url == " " || url == ''
+              puts 'enter nomaintim'
               url = JSON.parse((open(url)).read)
               coords = url[0]
               e.latitude, e.longitude = coords["lat"].to_f, coords["lon"].to_f if coords != nil
             end
           end
         end
-        
-        if e.latitude == nil
+
+        #http://www.mapquestapi.com/geocoding/v1/address?key=Fmjtd|luurn1u8l9%2Cbw%3Do5-9wyx0a&callback=renderOptions&inFormat=json&outFormat=json&location=20,Duncan,Street,Toronto,Canada
+        if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 4 ) || Event.last.latitude == e.latitude || Event.last.latitude == e.latitude || e.latitude == nil
+          # http://dev.virtualearth.net/REST/v1/Locations?CountryRegion=CA&adminDistrict=ON&locality=Toronto&addressLine=20%Duncan%Street&key=
+          streetmapsString = URI.encode('http://www.mapquestapi.com/geocoding/v1/address?key=Fmjtd|luurn1u8l9%2Cbw%3Do5-9wyx0a&outFormat=json&location=' + e.location)
+
+          begin
+            puts streetmapsString
+            coords = JSON.parse(open(streetmapsString).read)
+            unless coords == nil || coords['results'].empty?
+              puts 'entering street maps'
+              coordsSpec = coords['results'][0]['locations'][0]['latLng']
+              e.latitude, e.longitude = coordsSpec['lat'], coordsSpec['lng']
+            end
+          rescue
+          end
+
+        end
+
+        # check if no events, if so then geocode. of if previous geocode gave wonky results or if similair to last event, to get variation. or if currently nil
+        if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 4 ) || Event.last.latitude == e.latitude || Event.last.latitude == e.latitude || e.latitude == nil
+          # http://dev.virtualearth.net/REST/v1/Locations?CountryRegion=CA&adminDistrict=ON&locality=Toronto&addressLine=20%Duncan%Street&key=
+          locationSplit = e.location.split(',')[0]
+          mapsUrl = "http://dev.virtualearth.net/REST/v1/Locations?CountryRegion=CA&adminDistrict=ON&locality=Toronto&addressLine=" + locationSplit + "&key=" + Figaro.env.maps_key
+
+          begin
+            coords = JSON.parse(open(URI.encode(mapsUrl)).read)
+            unless coords == nil || coords['resourceSets']['resources'].empty?
+              puts 'enter bing maps'
+              coordsSpec = coords['resourceSets']['resources'][0]['point']['coordinates']
+              e.latitude, e.longitude = coordsSpec[0], coordsSpec[1]
+            end
+          rescue
+          end
+
+        end
+
+        if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 4 ) || Event.last.latitude == e.latitude || e.latitude == nil
           here_key = Figaro.env.here_key
           here_secret = Figaro.env.here_secret
-          string = "http://geocoder.cit.api.here.com/6.2/geocode.json?app_id=" + here_key + "&app_code=" + here_secret +"&gen=8&searchtext=" + e.location.gsub(' ', '+').gsub(',', '')
+          string = "http://geocoder.cit.api.here.com/6.2/geocode.json?app_id=" + here_key + "&app_code=" + here_secret +"&gen=8&searchtext=" + e.location.gsub(' ', '+').gsub(',', '')          
           begin
             coords = JSON.parse((open(string)).read)
           rescue
@@ -51,20 +90,38 @@ class Event < ActiveRecord::Base
             coords = JSON.parse((open(string)).read)
           end
           unless coords == nil || coords["Response"]["View"].length == 0
+            puts 'enter geocoder.cit'
             coords = coords["Response"]["View"][0]["Result"][0]["Location"]["DisplayPosition"]
             e.latitude, e.longitude = coords['Latitude'], coords['Longitude']
           end
         end
-        if e.latitude == nil
-          string = "https://api.geocod.io/v1/geocode?q=" + e.location.gsub('-','').gsub(',','').gsub('(','').gsub(')','').gsub(' ', '+') + "&api_key=cf88885cb459801b5a1b52aac3c89531b584934"
+
+        if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 4 ) || Event.last.latitude == e.latitude || e.latitude == nil
+          string = "http://api.tiles.mapbox.com/v4/geocode/mapbox.places/"+e.location.gsub('-','').gsub(',','').gsub('(','').gsub(')','').gsub(' ', '+')+".json?access_token=pk.eyJ1IjoicmFrc29uaWJzIiwiYSI6IjZ0TFFlUEUifQ._wLBBR-FcaQuIK-tnfU7-w"          
+          begin
+            coords = JSON.parse((open(string)).read)
+            unless coords == nil || coords['features'] == []
+              puts 'enter mapbox'
+              e.latitude, e.longitude = coords['features'][0]['center'][1], coords['features'][0]['center'][0]
+            end
+          rescue
+          end
+        end
+        
+        if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 4 ) || Event.last.latitude == e.latitude || e.latitude == nil
+          string = "https://api.geocod.io/v1/geocode?q=" + e.location.gsub('-','').gsub(',','').gsub('(','').gsub(')','').gsub(' ', '+') + "&api_key=cf88885cb459801b5a1b52aac3c89531b584934"          
           begin
             coords = JSON.parse((open(string)).read)
             unless coords == nil || coords['results'] == []
+              puts 'enter geocoder'
               e.latitude, e.longitude = coords['results'][0]['location']['lat'], coords['results'][0]['location']['lng']
             end
           rescue
           end
         end
+        
+        
+
       end
       e.uuid = SecureRandom.uuid
       
