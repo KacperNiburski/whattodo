@@ -123,8 +123,9 @@ class Event < ActiveRecord::Base
         
 
       end
-      e.uuid = SecureRandom.uuid
       
+      e.uuid = SecureRandom.uuid
+
       e.save!
     end
     writeToFile(arrEvents)
@@ -162,6 +163,7 @@ class Event < ActiveRecord::Base
   	events = []
   	data = Nokogiri::HTML(open("http://wx.toronto.ca/festevents.nsf/tpaview?readviewentries")).xpath("//viewentry")
     count = 0
+    
     data.each do |val|
       location = val.xpath("//entrydata[@name='Location']")[count].text
       location = location == "" || location == nil ?  "Toronto, Canada" : location + ', Toronto, Canada'
@@ -191,13 +193,17 @@ class Event < ActiveRecord::Base
 
       image = val.xpath("//entrydata[@name='Image']")[count].text == "" || val.xpath("//entrydata[@name='Image']")[count].text == nil ? "http://i.imgur.com/ixz8pZT.png?1" : val.xpath("//entrydata[@name='Image']")[count].text
 
-      # day start and end used for ranges
-      dayOn = val.xpath("//entrydata[@name='DateBeginShow']")[count].text + " " + timeStart
-      dayEnd = val.xpath("//entrydata[@name='DateEndShow']")[count].text
+        image = val.xpath("//entrydata[@name='Image']")[count].text == "" || val.xpath("//entrydata[@name='Image']")[count].text == nil ? "http://i.imgur.com/ixz8pZT.png?1" : val.xpath("//entrydata[@name='Image']")[count].text
+
+        # day start and end used for ranges
+        dayOn = dayOn + " " + timeStart
+
+        name =  val.xpath("//entrydata[@name='EventName']")[count].text
+      end
 
       desc = val.xpath("//entrydata[@name='LongDesc']")[count].text
 
-      events.push({name: val.xpath("//entrydata[@name='EventName']")[count].text, 
+      events.push({name: name, 
                   url: url,
                   location: location,
                   price: price,

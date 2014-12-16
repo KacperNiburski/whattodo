@@ -17,3 +17,5 @@ whattodo
 
 -> parsing event time in desc.
 -> look for other events and how to make them look good for party people.
+-> fix api geocoding all same place.
+-> restaurants 12am open yelp api

@@ -7,84 +7,41 @@ module Scraper
   class NowMagazine
 
     def self.club_events
-      # this breaks on ubuntu
-      begin
-        string = "http://www.clubcrawlers.com/toronto/events/all-events"
-        Capybara.app_host = string
-        eventsAll = []
-        count = 0
-        page = visit('/')
-       # while count < 2
-        while page.has_css?('.load-more')
-          page.all(:css, '.event-block').each do |event|
-            name = event.find('.event-info h2').text()
-            image = "http://www.clubcrawlers.com" + event.find('.hov img')[:src]
-            locationAndDate = event.find('.event-info h3').text()
-            #  checks if Dec. or something like that, so then know if Saturday or actual date for event
-            if locationAndDate[/\./]
-              location = locationAndDate.split(/\d+\s/)[1] + ", Toronto, Canada"
-              date = locationAndDate.scan(/.+\d+/)[0]
-            else 
-              locationAndDate = locationAndDate.split(/\s/)
-              date = locationAndDate[0][0...-1]
-              location = locationAndDate[1..-1].join(" ") + ", Toronto, Canada"
-            end
+      # http://www.clubcrawlers.com/toronto/events/tonightsevents
+      string = "http://www.clubcrawlers.com/toronto/events/tonightsevents"
+      data = Nokogiri::HTML(open(string)).css('.event-block')
+      eventsAll = []
 
-            url = "http://www.clubcrawlers.com" + event.find('.hov')[:href]
+      data.each do |event|
 
-            eventsAll.push({
-                name: name,
-                image: image,
-                url: url,
-                location: location,
-                price: 'Price not listed',
-                dayOn: Date.today,
-                dayEnd: Date.today,
-                desc: locationAndDate.join(' '),
-                categoryList: ["Party"],
-                source: "Club Crawlers"
-              })
-          end
-
-          page = page.find('.load-more').click() if page.has_css?('.load-more')
-          count += 1
-        end
-      rescue
-        # http://www.clubcrawlers.com/toronto/events/tonightsevents
-        string = "http://www.clubcrawlers.com/toronto/events/tonightsevents"
-        data = Nokogiri::HTML(open(string)).css('.event-block')
-
-        data.each do |event|
-
-          name = event.css('.event-info h2').text()
-          image = "http://www.clubcrawlers.com" + event.css('.hov img').attribute('src').value
-          locationAndDate = event.css('.event-info h3').text()
-          #  checks if Dec. or something like that, so then know if Saturday or actual date for event
-          if locationAndDate[/\./]
-            location = locationAndDate.split(/\d+\s/)[1] + ", Toronto, Canada"
-            date = locationAndDate.scan(/.+\d+/)[0]
-          else 
-            locationAndDate = locationAndDate.split(/\s/)
-            date = locationAndDate[0][0...-1]
-            location = locationAndDate[1..-1].join(" ") + ", Toronto, Canada"
-          end
-
-          url = "http://www.clubcrawlers.com" + event.css('.hov').attribute('href').value
-
-          eventsAll.push({
-            name: name,
-            image: image,
-            url: url,
-            location: location,
-            price: 'Price not listed',
-            dayOn: Date.today,
-            dayEnd: Date.today,
-            desc: locationAndDate.join(' '),
-            categoryList: ["Party"],
-            source: "Club Crawlers"
-          })
+        name = event.css('.event-info h2').text()
+        image = "http://www.clubcrawlers.com" + event.css('.hov img').attribute('src').value
+        locationAndDate = event.css('.event-info h3').text()
+        #  checks if Dec. or something like that, so then know if Saturday or actual date for event
+        if locationAndDate[/\./]
+          location = (locationAndDate.split(/\d+\s/)[1] + ", Toronto, Canada").lstrip
+          date = locationAndDate.scan(/.+\d+/)[0]
+        else 
+          locationAndDate = locationAndDate.split(/\s/)
+          date = locationAndDate[0][0...-1]
+          location = (locationAndDate[1..-1].join(" ")[1..-1] + ", Toronto, Canada").lstrip
+          locationAndDate = locationAndDate.join(' ')
         end
 
+        url = "http://www.clubcrawlers.com" + event.css('.hov').attribute('href').value
+
+        eventsAll.push({
+          name: name,
+          image: image,
+          url: url,
+          location: location,
+          price: 'Price not listed',
+          dayOn: Date.today,
+          dayEnd: Date.today,
+          desc: locationAndDate,
+          categoryList: ["Party"],
+          source: "Club Crawlers"
+        })
       end
 
       @headless.destroy if !OS.mac? && !@headless.nil?
