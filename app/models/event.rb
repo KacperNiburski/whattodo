@@ -163,13 +163,14 @@ class Event < ActiveRecord::Base
   	events = []
   	data = Nokogiri::HTML(open("http://wx.toronto.ca/festevents.nsf/tpaview?readviewentries")).xpath("//viewentry")
     count = 0
-    
+
     data.each do |val|
 
       dayOn = val.xpath("//entrydata[@name='DateBeginShow']")[count].text
       dayEnd = val.xpath("//entrydata[@name='DateEndShow']")[count].text
 
-      if Date.parse(dayOn) == Date.today || ( Date.today >= Date.parse(dayOn) && Date.today <= Date.parse(dayEnd) )
+      #if it is on today or in eight days, or today is inbetween its start and end date
+      if ( Date.parse(dayOn) >= Date.today && Date.parse(dayOn) <= ( Date.today + 8 ) ) || ( Date.today >= Date.parse(dayOn) && Date.today <= Date.parse(dayEnd) )
         location = val.xpath("//entrydata[@name='Location']")[count].text
         location = location == "" || location == nil ?  "Toronto, Canada" : location + ', Toronto, Canada'
 
@@ -202,21 +203,22 @@ class Event < ActiveRecord::Base
         dayOn = dayOn + " " + timeStart
 
         name =  val.xpath("//entrydata[@name='EventName']")[count].text
+
+        desc = val.xpath("//entrydata[@name='LongDesc']")[count].text
+
+        events.push({name: name, 
+                    url: url,
+                    location: location,
+                    price: price,
+                    dayOn: dayOn,
+                    dayEnd: dayEnd,
+                    desc: desc,
+                    categoryList: categoryList,
+                    source: "City Hall",
+                    image: image
+                  })
       end
 
-      desc = val.xpath("//entrydata[@name='LongDesc']")[count].text
-
-      events.push({name: name, 
-                  url: url,
-                  location: location,
-                  price: price,
-                  dayOn: dayOn,
-                  dayEnd: dayEnd,
-                  desc: desc,
-                  categoryList: categoryList,
-                  source: "City Hall",
-                  image: image
-                })
       count += 1
     end
 
