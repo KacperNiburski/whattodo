@@ -416,7 +416,7 @@ class Event < ActiveRecord::Base
         price = 'Free' if price == nil
         name = event.css("strong.summary").text
         location = event.css("strong.location").text + ', Toronto, Canada'
-        url = event.css('a').map{|a| a['href']}[0]
+        url = "http://justshows.com" + event.css('a').map{|a| a['href']}[0]
         description = "Music"
         image = "http://i.imgur.com/ixz8pZT.png?1"
 
