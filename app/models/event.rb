@@ -165,33 +165,36 @@ class Event < ActiveRecord::Base
     count = 0
     
     data.each do |val|
-      location = val.xpath("//entrydata[@name='Location']")[count].text
-      location = location == "" || location == nil ?  "Toronto, Canada" : location + ', Toronto, Canada'
 
-      price = val.xpath("//entrydata[@name='Admission']")[count].text == "" ? "Price not listed" : val.xpath("//entrydata[@name='Admission']")[count].text
-      if price[/ - /]
-        price = price[/\s\$\d+/][/\d+/]
-        price = price[/\d+/]
-      else
-        price = price == "Free" || price == "Price not listed" ? price : price[/\d+/]
-      end
+      dayOn = val.xpath("//entrydata[@name='DateBeginShow']")[count].text
+      dayEnd = val.xpath("//entrydata[@name='DateEndShow']")[count].text
 
-      categoryList = val.xpath("//entrydata[@name='CategoryList']")[count].text
-      # annoying regex to check for categoryList
-      categoryList = if categoryList == nil 
-                        ["Misc"]
-                      else
-                        categoryList.split(/([A-Z]+[a-z]*\s*[a-z]*)/).reject! { |c| c.empty? || c == "/"}
-                      end
+      if Date.parse(dayOn) == Date.today || ( Date.today >= Date.parse(dayOn) && Date.today <= Date.parse(dayEnd) )
+        location = val.xpath("//entrydata[@name='Location']")[count].text
+        location = location == "" || location == nil ?  "Toronto, Canada" : location + ', Toronto, Canada'
 
-      categoryList = ["Misc"] if categoryList == nil || categoryList == ""
+        price = val.xpath("//entrydata[@name='Admission']")[count].text == "" ? "Price not listed" : val.xpath("//entrydata[@name='Admission']")[count].text
+        if price[/ - /]
+          price = price[/\s\$\d+/][/\d+/]
+          price = price[/\d+/]
+        else
+          price = price == "Free" || price == "Price not listed" ? price : price[/\d+/]
+        end
 
-      timeStart = val.xpath("//entrydata[@name='TimeBegin']")[count].text == "" || val.xpath("//entrydata[@name='TimeBegin']")[count].text == nil || val.xpath("//entrydata[@name='TimeBegin']")[count].text == ': ' ? "Time not listed" : Time.parse(val.xpath("//entrydata[@name='TimeBegin']")[count].text).strftime("%I:%M %p")
-      timeEnd = val.xpath("//entrydata[@name='TimeEnd']")[count].text == "" || val.xpath("//entrydata[@name='TimeBegin']")[count].text == nil || val.xpath("//entrydata[@name='TimeBegin']")[count].text == ': ' ? "Time not listed" : Time.parse(val.xpath("//entrydata[@name='TimeEnd']")[count].text).strftime("%I:%M %p")
+        categoryList = val.xpath("//entrydata[@name='CategoryList']")[count].text
+        # annoying regex to check for categoryList
+        categoryList = if categoryList == nil 
+                          ["Misc"]
+                        else
+                          categoryList.split(/([A-Z]+[a-z]*\s*[a-z]*)/).reject! { |c| c.empty? || c == "/"}
+                        end
 
-      url = val.xpath("//entrydata[@name='EventURL']")[count].text == "" || val.xpath("//entrydata[@name='EventURL']")[count].text == nil ? "No url listed" : val.xpath("//entrydata[@name='EventURL']")[count].text
+        categoryList = ["Misc"] if categoryList == nil || categoryList == ""
 
-      image = val.xpath("//entrydata[@name='Image']")[count].text == "" || val.xpath("//entrydata[@name='Image']")[count].text == nil ? "http://i.imgur.com/ixz8pZT.png?1" : val.xpath("//entrydata[@name='Image']")[count].text
+        timeStart = val.xpath("//entrydata[@name='TimeBegin']")[count].text == "" || val.xpath("//entrydata[@name='TimeBegin']")[count].text == nil || val.xpath("//entrydata[@name='TimeBegin']")[count].text == ': ' ? "Time not listed" : Time.parse(val.xpath("//entrydata[@name='TimeBegin']")[count].text).strftime("%I:%M %p")
+        timeEnd = val.xpath("//entrydata[@name='TimeEnd']")[count].text == "" || val.xpath("//entrydata[@name='TimeBegin']")[count].text == nil || val.xpath("//entrydata[@name='TimeBegin']")[count].text == ': ' ? "Time not listed" : Time.parse(val.xpath("//entrydata[@name='TimeEnd']")[count].text).strftime("%I:%M %p")
+
+        url = val.xpath("//entrydata[@name='EventURL']")[count].text == "" || val.xpath("//entrydata[@name='EventURL']")[count].text == nil ? "No url listed" : val.xpath("//entrydata[@name='EventURL']")[count].text
 
         image = val.xpath("//entrydata[@name='Image']")[count].text == "" || val.xpath("//entrydata[@name='Image']")[count].text == nil ? "http://i.imgur.com/ixz8pZT.png?1" : val.xpath("//entrydata[@name='Image']")[count].text
 
