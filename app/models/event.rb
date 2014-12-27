@@ -201,6 +201,7 @@ class Event < ActiveRecord::Base
 
         # day start and end used for ranges
         dayOn = dayOn + " " + timeStart
+        dayEnd = dayOn + ' ' + timeEnd
 
         name =  val.xpath("//entrydata[@name='EventName']")[count].text
 
@@ -311,12 +312,7 @@ class Event < ActiveRecord::Base
         categoryList = ["Misc"] if categoryList == nil || categoryList == ""
         longitude = event["longitude"]
         latitude = event['latitude']
-        image = event['image']
-        begin
-          image = image != nil && image != "" && image != " " ? image['medium']['url'] : "http://i.imgur.com/ixz8pZT.png?1"
-        rescue
-          image = "http://i.imgur.com/ixz8pZT.png?1"
-        end
+        image = "http://i.imgur.com/ixz8pZT.png?1"
         desc = ActionView::Base.full_sanitizer.sanitize(desc).gsub("\n",'').gsub("\t", "").gsub("\r","").strip
 
         eventAll.push({
@@ -378,7 +374,7 @@ class Event < ActiveRecord::Base
           location: location, 
           price: price,
           dayOn: time,
-          dayEnd: time,
+          dayEnd: time + 3.hours,
           desc: desc,
           categoryList: categoryList,
           source: "Meetup",
@@ -426,15 +422,17 @@ class Event < ActiveRecord::Base
           location: location,
           price: price,
           dayOn: dayTimeStart,
-          dayEnd: dayTimeStart,
+          dayEnd: Time.parse(dayTimeStart) + 4.hours,
           desc: description,
           categoryList: ["Music"],
           source: "Just Shows",
           image: image
-          })
+        })
       end
+
       pageCount += 1
     end
+
     return eventAll
   end
 
@@ -474,7 +472,7 @@ class Event < ActiveRecord::Base
           location: location, 
           price: 'Check listing url!',
           dayOn: dayTime,
-          dayEnd: dayTime,
+          dayEnd: "No end time specified",
           desc: descIncomplete,
           categoryList: categoryList,
           source: "Blog.to",

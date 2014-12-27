@@ -36,8 +36,8 @@ module Scraper
           url: url,
           location: location,
           price: 'Price not listed',
-          dayOn: Date.today,
-          dayEnd: Date.today,
+          dayOn: Date.today.to_s + ' 9:00 pm',
+          dayEnd: (Date.today + 1).to_s + ' 2:00 am',
           desc: locationAndDate,
           categoryList: ["Party"],
           source: "Club Crawlers"
@@ -66,7 +66,7 @@ module Scraper
           name = element.find('.event_title').text()
           splitedDate = element.find('.event_date').text().split('-')
           dayOn = splitedDate[0]
-          dayEnd = splitedDate[1] || splitedDate[0]
+          dayEnd = splitedDate[1] || Time.parse(splitedDate[0]) + 3.hours
           url = element.find('h4.event_title a')[:href]
           location = element.all(:css, '.event_info a')[1].text() + ', Toronto, Canada'
           desc = element.find('.description').text()[0..-8]
