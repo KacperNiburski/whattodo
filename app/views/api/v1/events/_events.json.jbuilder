@@ -3,7 +3,7 @@ json.meta do
 end
 json.events events do |event|
   json.ruby_id event.id
-  json.uuid SecureRandom.uuid 
+  json.uuid event.uuid
   json.name event.name
   json.location event.location
   json.price event.price

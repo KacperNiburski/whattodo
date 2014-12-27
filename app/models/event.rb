@@ -24,6 +24,7 @@ class Event < ActiveRecord::Base
           begin
             coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
             e.latitude, e.longitude = coords[0], coords[1]
+            puts 'enter google'
           rescue
             fragment = e.location.gsub(',','').gsub('/','')
             if fragment.scan(/Toronto/).length >= 2
@@ -31,19 +32,57 @@ class Event < ActiveRecord::Base
             else
               fragment = fragment
             end
-            url = URI.encode("http://nominatim.openstreetmap.org/search/" + fragment +"?format=json&addressdetails=1&limit=1")
+            url = URI.encode("http://nominatim.openstreetmap.org/search/" + fragment +"?format=json&addressdetails=1&limit=1")            
+
             unless url == nil || url == " " || url == ''
+              puts 'enter nomaintim'
               url = JSON.parse((open(url)).read)
               coords = url[0]
               e.latitude, e.longitude = coords["lat"].to_f, coords["lon"].to_f if coords != nil
             end
           end
         end
-        
-        if e.latitude == nil
+
+        #http://www.mapquestapi.com/geocoding/v1/address?key=Fmjtd|luurn1u8l9%2Cbw%3Do5-9wyx0a&callback=renderOptions&inFormat=json&outFormat=json&location=20,Duncan,Street,Toronto,Canada
+        if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || Event.last.latitude == e.latitude || e.latitude == nil
+          # http://dev.virtualearth.net/REST/v1/Locations?CountryRegion=CA&adminDistrict=ON&locality=Toronto&addressLine=20%Duncan%Street&key=
+          streetmapsString = URI.encode('http://www.mapquestapi.com/geocoding/v1/address?key=Fmjtd|luurn1u8l9%2Cbw%3Do5-9wyx0a&outFormat=json&location=' + e.location)
+
+          begin
+            puts streetmapsString
+            coords = JSON.parse(open(streetmapsString).read)
+            unless coords == nil || coords['results'].empty?
+              puts 'entering street maps'
+              coordsSpec = coords['results'][0]['locations'][0]['latLng']
+              e.latitude, e.longitude = coordsSpec['lat'], coordsSpec['lng']
+            end
+          rescue
+          end
+
+        end
+
+        # check if no events, if so then geocode. of if previous geocode gave wonky results or if similair to last event, to get variation. or if currently nil
+        if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || Event.last.latitude == e.latitude || e.latitude == nil
+          # http://dev.virtualearth.net/REST/v1/Locations?CountryRegion=CA&adminDistrict=ON&locality=Toronto&addressLine=20%Duncan%Street&key=
+          locationSplit = e.location.split(',')[0]
+          mapsUrl = "http://dev.virtualearth.net/REST/v1/Locations?CountryRegion=CA&adminDistrict=ON&locality=Toronto&addressLine=" + locationSplit + "&key=" + Figaro.env.maps_key
+
+          begin
+            coords = JSON.parse(open(URI.encode(mapsUrl)).read)
+            unless coords == nil || coords['resourceSets']['resources'].empty?
+              puts 'enter bing maps'
+              coordsSpec = coords['resourceSets']['resources'][0]['point']['coordinates']
+              e.latitude, e.longitude = coordsSpec[0], coordsSpec[1]
+            end
+          rescue
+          end
+
+        end
+
+        if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || e.latitude == nil
           here_key = Figaro.env.here_key
           here_secret = Figaro.env.here_secret
-          string = "http://geocoder.cit.api.here.com/6.2/geocode.json?app_id=" + here_key + "&app_code=" + here_secret +"&gen=8&searchtext=" + e.location.gsub(' ', '+').gsub(',', '')
+          string = "http://geocoder.cit.api.here.com/6.2/geocode.json?app_id=" + here_key + "&app_code=" + here_secret +"&gen=8&searchtext=" + e.location.gsub(' ', '+').gsub(',', '')          
           begin
             coords = JSON.parse((open(string)).read)
           rescue
@@ -51,21 +90,42 @@ class Event < ActiveRecord::Base
             coords = JSON.parse((open(string)).read)
           end
           unless coords == nil || coords["Response"]["View"].length == 0
+            puts 'enter geocoder.cit'
             coords = coords["Response"]["View"][0]["Result"][0]["Location"]["DisplayPosition"]
             e.latitude, e.longitude = coords['Latitude'], coords['Longitude']
           end
         end
-        if e.latitude == nil
-          string = "https://api.geocod.io/v1/geocode?q=" + e.location.gsub('-','').gsub(',','').gsub('(','').gsub(')','').gsub(' ', '+') + "&api_key=cf88885cb459801b5a1b52aac3c89531b584934"
+
+        if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || e.latitude == nil
+          string = "http://api.tiles.mapbox.com/v4/geocode/mapbox.places/"+e.location.gsub('-','').gsub(',','').gsub('(','').gsub(')','').gsub(' ', '+')+".json?access_token=pk.eyJ1IjoicmFrc29uaWJzIiwiYSI6IjZ0TFFlUEUifQ._wLBBR-FcaQuIK-tnfU7-w"          
+          begin
+            coords = JSON.parse((open(string)).read)
+            unless coords == nil || coords['features'] == []
+              puts 'enter mapbox'
+              e.latitude, e.longitude = coords['features'][0]['center'][1], coords['features'][0]['center'][0]
+            end
+          rescue
+          end
+        end
+        
+        if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || e.latitude == nil
+          string = "https://api.geocod.io/v1/geocode?q=" + e.location.gsub('-','').gsub(',','').gsub('(','').gsub(')','').gsub(' ', '+') + "&api_key=cf88885cb459801b5a1b52aac3c89531b584934"          
           begin
             coords = JSON.parse((open(string)).read)
             unless coords == nil || coords['results'] == []
+              puts 'enter geocoder'
               e.latitude, e.longitude = coords['results'][0]['location']['lat'], coords['results'][0]['location']['lng']
             end
           rescue
           end
         end
+        
+        
+
       end
+      
+      e.uuid = SecureRandom.uuid
+
       e.save!
     end
     writeToFile(arrEvents)
@@ -87,13 +147,13 @@ class Event < ActiveRecord::Base
              self.eventful,
              self.meetup,
              self.blogto,
-             self.cityhall
+             self.cityhall,
+             self.torontocom
   	].flatten
   end
 
   def self.getdata_two
     return [self.nowmagazine,
-            self.torontocom,
             self.elmcity
           ].flatten
   end
@@ -103,52 +163,63 @@ class Event < ActiveRecord::Base
   	events = []
   	data = Nokogiri::HTML(open("http://wx.toronto.ca/festevents.nsf/tpaview?readviewentries")).xpath("//viewentry")
     count = 0
+
     data.each do |val|
-      location = val.xpath("//entrydata[@name='Location']")[count].text
-      location = location == "" || location == nil ?  "Toronto, Canada" : location + ', Toronto, Canada'
 
-      price = val.xpath("//entrydata[@name='Admission']")[count].text == "" ? "Price not listed" : val.xpath("//entrydata[@name='Admission']")[count].text
-      if price[/ - /]
-        price = price[/\s\$\d+/][/\d+/]
-        price = price[/\d+/]
-      else
-        price = price == "Free" || price == "Price not listed" ? price : price[/\d+/]
-      end
-
-      categoryList = val.xpath("//entrydata[@name='CategoryList']")[count].text
-      # annoying regex to check for categoryList
-      categoryList = if categoryList == nil 
-                        ["Misc"]
-                      else
-                        categoryList.split(/([A-Z]+[a-z]*\s*[a-z]*)/).reject! { |c| c.empty? || c == "/"}
-                      end
-
-      categoryList = ["Misc"] if categoryList == nil || categoryList == ""
-
-      timeStart = val.xpath("//entrydata[@name='TimeBegin']")[count].text == "" || val.xpath("//entrydata[@name='TimeBegin']")[count].text == nil || val.xpath("//entrydata[@name='TimeBegin']")[count].text == ': ' ? "Time not listed" : Time.parse(val.xpath("//entrydata[@name='TimeBegin']")[count].text).strftime("%I:%M %p")
-      timeEnd = val.xpath("//entrydata[@name='TimeEnd']")[count].text == "" || val.xpath("//entrydata[@name='TimeBegin']")[count].text == nil || val.xpath("//entrydata[@name='TimeBegin']")[count].text == ': ' ? "Time not listed" : Time.parse(val.xpath("//entrydata[@name='TimeEnd']")[count].text).strftime("%I:%M %p")
-
-      url = val.xpath("//entrydata[@name='EventURL']")[count].text == "" || val.xpath("//entrydata[@name='EventURL']")[count].text == nil ? "No url listed" : val.xpath("//entrydata[@name='EventURL']")[count].text
-
-      image = val.xpath("//entrydata[@name='Image']")[count].text == "" || val.xpath("//entrydata[@name='Image']")[count].text == nil ? "http://i.imgur.com/ixz8pZT.png?1" : val.xpath("//entrydata[@name='Image']")[count].text
-
-      # day start and end used for ranges
-      dayOn = val.xpath("//entrydata[@name='DateBeginShow']")[count].text + " " + timeStart
+      dayOn = val.xpath("//entrydata[@name='DateBeginShow']")[count].text
       dayEnd = val.xpath("//entrydata[@name='DateEndShow']")[count].text
 
-      desc = val.xpath("//entrydata[@name='LongDesc']")[count].text
+      #if it is on today or in eight days, or today is inbetween its start and end date
+      if ( Date.parse(dayOn) >= Date.today && Date.parse(dayOn) <= ( Date.today + 8 ) ) || ( Date.today >= Date.parse(dayOn) && Date.today <= Date.parse(dayEnd) )
+        location = val.xpath("//entrydata[@name='Location']")[count].text
+        location = location == "" || location == nil ?  "Toronto, Canada" : location + ', Toronto, Canada'
 
-      events.push({name: val.xpath("//entrydata[@name='EventName']")[count].text, 
-                  url: url,
-                  location: location,
-                  price: price,
-                  dayOn: dayOn,
-                  dayEnd: dayEnd,
-                  desc: desc,
-                  categoryList: categoryList,
-                  source: "City Hall",
-                  image: image
-                })
+        price = val.xpath("//entrydata[@name='Admission']")[count].text == "" ? "Price not listed" : val.xpath("//entrydata[@name='Admission']")[count].text
+        if price[/ - /]
+          price = price[/\s\$\d+/][/\d+/]
+          price = price[/\d+/]
+        else
+          price = price == "Free" || price == "Price not listed" ? price : price[/\d+/]
+        end
+
+        categoryList = val.xpath("//entrydata[@name='CategoryList']")[count].text
+        # annoying regex to check for categoryList
+        categoryList = if categoryList == nil 
+                          ["Misc"]
+                        else
+                          categoryList.split(/([A-Z]+[a-z]*\s*[a-z]*)/).reject! { |c| c.empty? || c == "/"}
+                        end
+
+        categoryList = ["Misc"] if categoryList == nil || categoryList == ""
+
+        timeStart = val.xpath("//entrydata[@name='TimeBegin']")[count].text == "" || val.xpath("//entrydata[@name='TimeBegin']")[count].text == nil || val.xpath("//entrydata[@name='TimeBegin']")[count].text == ': ' ? "Time not listed" : Time.parse(val.xpath("//entrydata[@name='TimeBegin']")[count].text).strftime("%I:%M %p")
+        timeEnd = val.xpath("//entrydata[@name='TimeEnd']")[count].text == "" || val.xpath("//entrydata[@name='TimeBegin']")[count].text == nil || val.xpath("//entrydata[@name='TimeBegin']")[count].text == ': ' ? "Time not listed" : Time.parse(val.xpath("//entrydata[@name='TimeEnd']")[count].text).strftime("%I:%M %p")
+
+        url = val.xpath("//entrydata[@name='EventURL']")[count].text == "" || val.xpath("//entrydata[@name='EventURL']")[count].text == nil ? "No url listed" : val.xpath("//entrydata[@name='EventURL']")[count].text
+
+        image = val.xpath("//entrydata[@name='Image']")[count].text == "" || val.xpath("//entrydata[@name='Image']")[count].text == nil ? "http://i.imgur.com/ixz8pZT.png?1" : val.xpath("//entrydata[@name='Image']")[count].text
+
+        # day start and end used for ranges
+        dayOn = dayOn + " " + timeStart
+        dayEnd = dayOn + ' ' + timeEnd
+
+        name =  val.xpath("//entrydata[@name='EventName']")[count].text
+
+        desc = val.xpath("//entrydata[@name='LongDesc']")[count].text
+
+        events.push({name: name, 
+                    url: url,
+                    location: location,
+                    price: price,
+                    dayOn: dayOn,
+                    dayEnd: dayEnd,
+                    desc: desc,
+                    categoryList: categoryList,
+                    source: "City Hall",
+                    image: image
+                  })
+      end
+
       count += 1
     end
 
@@ -241,12 +312,7 @@ class Event < ActiveRecord::Base
         categoryList = ["Misc"] if categoryList == nil || categoryList == ""
         longitude = event["longitude"]
         latitude = event['latitude']
-        image = event['image']
-        begin
-          image = image != nil && image != "" && image != " " ? image['medium']['url'] : "http://i.imgur.com/ixz8pZT.png?1"
-        rescue
-          image = "http://i.imgur.com/ixz8pZT.png?1"
-        end
+        image = "http://i.imgur.com/ixz8pZT.png?1"
         desc = ActionView::Base.full_sanitizer.sanitize(desc).gsub("\n",'').gsub("\t", "").gsub("\r","").strip
 
         eventAll.push({
@@ -308,7 +374,7 @@ class Event < ActiveRecord::Base
           location: location, 
           price: price,
           dayOn: time,
-          dayEnd: time,
+          dayEnd: time + 3.hours,
           desc: desc,
           categoryList: categoryList,
           source: "Meetup",
@@ -346,7 +412,7 @@ class Event < ActiveRecord::Base
         price = 'Free' if price == nil
         name = event.css("strong.summary").text
         location = event.css("strong.location").text + ', Toronto, Canada'
-        url = event.css('a').map{|a| a['href']}[0]
+        url = "http://justshows.com" + event.css('a').map{|a| a['href']}[0]
         description = "Music"
         image = "http://i.imgur.com/ixz8pZT.png?1"
 
@@ -356,15 +422,17 @@ class Event < ActiveRecord::Base
           location: location,
           price: price,
           dayOn: dayTimeStart,
-          dayEnd: dayTimeStart,
+          dayEnd: Time.parse(dayTimeStart) + 4.hours,
           desc: description,
           categoryList: ["Music"],
           source: "Just Shows",
           image: image
-          })
+        })
       end
+
       pageCount += 1
     end
+
     return eventAll
   end
 
@@ -404,7 +472,7 @@ class Event < ActiveRecord::Base
           location: location, 
           price: 'Check listing url!',
           dayOn: dayTime,
-          dayEnd: dayTime,
+          dayEnd: "No end time specified",
           desc: descIncomplete,
           categoryList: categoryList,
           source: "Blog.to",
