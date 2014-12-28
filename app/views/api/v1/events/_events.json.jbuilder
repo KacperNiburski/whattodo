@@ -12,7 +12,7 @@ json.events events do |event|
     json.dayOn event.dayEnd
   else
     json.dayOn Time.parse(event.dayOn).to_i
-    json.dayEnd Time.parse(event.dayOn).to_i
+    json.dayEnd Time.parse(event.dayEnd).to_i
   end
   json.latitude event.latitude
   json.longitude event.longitude
