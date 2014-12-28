@@ -35,7 +35,7 @@ class API::V1::EventsController < ApplicationController
     respond_with @eventsToday
   end
 
-  def all_events
+  def all
     @eventsToday = uniqueEvents(Event.all)
     
     filter_events
