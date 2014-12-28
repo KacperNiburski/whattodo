@@ -9,7 +9,7 @@ json.events events do |event|
   json.price event.price
   if event.dayOn.length < 10
     json.dayOn event.dayOn
-    json.dayOn event.dayEnd
+    json.dayEnd event.dayEnd
   else
     json.dayOn Time.parse(event.dayOn).to_i
     json.dayEnd Time.parse(event.dayEnd).to_i
