@@ -13,6 +13,7 @@ Whattodo::Application.routes.draw do
       get '/today' => "events#today"
       get '/party' => 'events#partyEvents'
       get '/tomorrow' => 'events#tomorrow'
+      get '/all' => 'events#all_events'
     end
   end
 
