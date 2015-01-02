@@ -301,7 +301,7 @@ class Event < ActiveRecord::Base
       dataForPage.each do |event|
         name = event["title"]
         timeStart = event["start_time"]
-        timeEnd = event["stop_time"]
+        timeEnd = event["stop_time"] || "No end time specified"
         price = 'Check listing url!'
         location = event["venue_address"]
         location = location == "" || location == nil ? "No address listed" : location + ", Toronto, Canada"

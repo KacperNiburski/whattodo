@@ -12,6 +12,8 @@ Whattodo::Application.routes.draw do
       resources :events
       get '/today' => "events#today"
       get '/party' => 'events#partyEvents'
+      get '/tomorrow' => 'events#tomorrow'
+      get '/all' => 'events#all'
     end
   end
 
