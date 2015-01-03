@@ -1,0 +1,10 @@
+<% @eventsToday.each do |event| %>
+  <% if !event.approved %>
+    <%= check_box_tag(:event, "#{event.id}") %>
+    <%= label_tag(:event, "#{event.name}", class: 'check-box') %>
+  <% else %>
+    <%= event.name %>
+    Approved event
+  <% end %>
+  <br>
+<% end %>
