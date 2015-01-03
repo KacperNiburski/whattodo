@@ -7,6 +7,8 @@ gem 'pg'
 
 gem 'os'
 
+gem 'simple_form'
+
 gem 'capybara'
 gem 'selenium-webdriver'
 gem 'mechanize'

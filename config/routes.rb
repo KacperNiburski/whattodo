@@ -15,6 +15,7 @@ Whattodo::Application.routes.draw do
       get '/tomorrow' => 'events#tomorrow'
       get '/all' => 'events#all'
       get '/curate' => 'events#curate', defaults: {format: 'html'}
+      get '/approve/:id' => 'events#approve', as: :approve, defaults: {format: 'html'}
     end
   end
 

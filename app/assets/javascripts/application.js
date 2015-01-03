@@ -13,12 +13,18 @@
 //= require jquery
 //= require_tree .
 $(document).ready(function() {
-  console.log('ready')
   $('.button').click(function() {
-    console.log('shooting event')
     $.get("/api/v1/create_token", function(data) {
-      console.log('data sent')
       $('.key-holder').text("Your access token: " + data.access_token)
     })
   })
+
+  $('#select-all').click(function() {
+    $('input').attr('checked', 'checked')
+  })
+
+  $('#uncheck').click(function() {
+    $('input').removeAttr('checked')
+  })
 })
+
