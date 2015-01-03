@@ -27,19 +27,26 @@ $(document).ready(function() {
     $('input').removeAttr('checked')
   })
 
-  $('#submit-all').click(function() {
-    var allData = []
+  $('#approve-all, #unapprove-all').click(function() {
+    var allData = [],
+        url;
     $.each($('input:checked'), function(index, eventId) {
       var eventNum = $(eventId).val()
       allData.push(eventNum)
     })
+
+    if ($(this).attr('id') === 'approve-all') {
+      url = "/api/v1/approve"
+    } else {
+      url = "/api/v1/unapprove"
+    }
 
     if (allData.toString() === [].toString()) {
       $('.target').text('Pick some events noob!')
     } else {
       $('.target').text('')
       $.ajax({
-        url: "/api/v1/approve",
+        url: url,
         type: "GET",
         dataType: "script",
         data: {events: allData },

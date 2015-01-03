@@ -1,10 +1,40 @@
-<% @eventsToday.each do |event| %>
-  <% if !event.approved %>
-    <%= check_box_tag(:event, "#{event.id}") %>
-    <%= label_tag(:event, "#{event.name}", class: 'check-box') %>
-  <% else %>
-    <%= event.name %>
-    Approved event
+<table>
+  <tr>
+    <th>
+      Approve/Unapprove
+    </th>
+    <th>
+      Name
+    </th>
+    <th>Approved</th>
+    <th>
+      Location
+    </th>
+    <th>Price</th>
+    <th>Latitude</th>
+    <th>Longitude</th>
+    <th>Url</th>
+    <th>Image</th>
+    <th>DayOn</th>
+    <th>DayEnd</th>
+  </tr>
+  <% @eventsToday.each do |event| %>
+  <tr>
+    <td>
+      <%= check_box_tag(:event, "#{event.id}") %>
+    </td>
+    <td>
+      <%= label_tag(:event, "#{event.name.truncate(35)}", class: 'check-box') %>
+    </td>
+    <td><%= event.approved %></td>
+    <td><%= event.location %></td>
+    <td><%= event.price %></td>
+    <td><%= event.latitude %></td>
+    <td><%= event.longitude %></td>
+    <td><%= event.url %></td>
+    <td><%= event.url %></td>
+    <td><%= event.dayOn %></td>
+    <td><%= event.dayEnd %></td>
+  </tr>
   <% end %>
-  <br>
-<% end %>
+</table>
