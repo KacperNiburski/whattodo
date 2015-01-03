@@ -27,6 +27,14 @@ class API::V1::EventsController < ApplicationController
     respond_with @eventsToday
   end
 
+  def approve
+    @event = Event.find(params[:id])
+    @event.approved = true
+    @event.save
+    
+    redirect_to api_v1_curate_path(access_token: session[:access_token])
+  end
+
   def curate 
     # NTD: ensure admin
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
@@ -74,6 +82,7 @@ class API::V1::EventsController < ApplicationController
       api_key = APIKey.find_by_access_token(params[:access_token])
       expired = api_key != nil && api_key.expires_on != nil && Date.today < Date.parse(api_key.expires_on)
       head :unauthorized unless api_key && expired
+      session[:access_token] = params[:access_token]
     end
 
     # def restrict_access
