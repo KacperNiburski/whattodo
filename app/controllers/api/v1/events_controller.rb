@@ -57,14 +57,7 @@ class API::V1::EventsController < ApplicationController
 
   def curate 
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
-    #  @eventsToday.each do |e| 
-    #   if e.approved == true
-    #     e.approved = nil
-    #   else
-    #     e.approved = nil
-    #   end
-    #   e.save
-    # end
+    
     filter_events
 
     respond_to do |format|
