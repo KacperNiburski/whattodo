@@ -26,5 +26,23 @@ $(document).ready(function() {
   $('#uncheck').click(function() {
     $('input').removeAttr('checked')
   })
+
+  $('#submit-all').click(function() {
+    var allData = []
+    $.each($('input:checked'), function(index, eventId) {
+      var eventNum = $(eventId).val()
+      allData.push(eventNum)
+    })
+
+    $.ajax({
+      url: "/api/v1/approve",
+      type: "GET",
+      dataType: "script",
+      data: {events: allData },
+      complete: function(data) {
+        console.log('complete')
+      }
+    })
+  })
 })
 

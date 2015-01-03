@@ -28,11 +28,17 @@ class API::V1::EventsController < ApplicationController
   end
 
   def approve
-    @event = Event.find(params[:id])
-    @event.approved = true
-    @event.save
+    @events = params[:events].map{|e| Event.find(e) }
+    @events.each do |e| 
+      e.approved = true
+      e.save
+    end
+
+    @eventsToday = @events
     
-    redirect_to api_v1_curate_path(access_token: session[:access_token])
+    respond_to do |format|
+      format.js{ }  
+    end
   end
 
   def curate 
