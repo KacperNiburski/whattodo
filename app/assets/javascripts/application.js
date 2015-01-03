@@ -34,15 +34,20 @@ $(document).ready(function() {
       allData.push(eventNum)
     })
 
-    $.ajax({
-      url: "/api/v1/approve",
-      type: "GET",
-      dataType: "script",
-      data: {events: allData },
-      complete: function(data) {
-        console.log('complete')
-      }
-    })
+    if (allData.toString() === [].toString()) {
+      $('.target').text('Pick some events noob!')
+    } else {
+      $('.target').text('')
+      $.ajax({
+        url: "/api/v1/approve",
+        type: "GET",
+        dataType: "script",
+        data: {events: allData },
+        complete: function(data) {
+          console.log('complete')
+        }
+      })
+    }
   })
 })
 

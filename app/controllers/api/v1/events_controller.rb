@@ -3,7 +3,7 @@ class API::V1::EventsController < ApplicationController
   helper_method :getMatchingDayEvents
   helper_method :uniqueEvents
 
-  before_filter :restrict_access, except: [:create_token, :approve]
+  before_filter :restrict_access, except: [:create_token, :approve, :curate]
 
   respond_to :json, except: :curate
 
@@ -34,15 +34,14 @@ class API::V1::EventsController < ApplicationController
       e.save
     end
 
-    @eventsToday = @events
+    @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
     
     respond_to do |format|
-      format.js{ }  
+      format.js{}  
     end
   end
 
   def curate 
-    # NTD: ensure admin
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
 
     filter_events
@@ -71,6 +70,7 @@ class API::V1::EventsController < ApplicationController
 
   def partyEvents
     @eventsToday = uniqueEvents(getMatchingDayEvents).select{|event| event.source == "Nowmagazine" || event.source == "Club Crawlers" || event.source == "Just Shows"}
+
     filter_events
     
     respond_with @eventsToday

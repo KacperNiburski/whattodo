@@ -1,6 +1,11 @@
 <button id="select-all">Select all</button> <br>
 <button id="uncheck">Uncheck all</button> <br>
-<%= button_to 'Submit', api_v1_approve_url, id: 'submit-all' %><br>
+<button id="submit-all">Submit all</button> <br>
+
+<div class="target">
+  
+</div>
+
 <div class="all-output">
   <%= render 'allEvents', locals: {eventsToday: @eventsToday} %>
 </div>
