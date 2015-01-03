@@ -40,9 +40,7 @@ class API::V1::EventsController < ApplicationController
 
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
     
-    respond_to do |format|
-      format.js{}  
-    end
+    render :approve
   end
 
   def approved
@@ -55,7 +53,6 @@ class API::V1::EventsController < ApplicationController
 
   def curate 
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
-
     filter_events
 
     respond_to do |format|
