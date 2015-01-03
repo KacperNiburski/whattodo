@@ -44,6 +44,7 @@ $(document).ready(function() {
             + '<td><label class="check-box" for="event">'+eventArr['name']+'</label></td>'
             +'<td>'+eventArr['approved']+'</td>'
             +'<td>'+eventArr['location']+'</td>'
+            +'<td>'+eventArr['price']+'</td>'
             +'<td>'+eventArr['latitude']+'</td>'
             +'<td>'+eventArr['longitude']+'</td>'
             +'<td>'+eventArr['url']+'</td>'
