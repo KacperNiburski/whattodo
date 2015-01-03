@@ -3,7 +3,7 @@ class API::V1::EventsController < ApplicationController
   helper_method :getMatchingDayEvents
   helper_method :uniqueEvents
 
-  before_filter :restrict_access, except: [:create_token, :approve, :curate, :unapprove]
+  before_filter :restrict_access, except: [:create_token, :approve, :curate]
 
   respond_to :json, except: :curate
 
@@ -30,7 +30,11 @@ class API::V1::EventsController < ApplicationController
   def approve
     @events = params[:events].map{|e| Event.find(e) }
     @events.each do |e| 
-      e.approved = true
+      if e.approved == true
+        e.approved = false
+      else
+        e.approved = true
+      end
       e.save
     end
 
@@ -43,20 +47,6 @@ class API::V1::EventsController < ApplicationController
 
   def approved
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1)).where(approved: true)
-  end
-
-  def unapprove
-    @events = params[:events].map{|e| Event.find(e) }
-    @events.each do |e| 
-      e.approved = false
-      e.save
-    end
-
-    @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
-    
-    respond_to do |format|
-      format.js{render 'approve.js.erb'}  
-    end
   end
 
   def curate 

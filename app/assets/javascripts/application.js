@@ -27,7 +27,7 @@ $(document).ready(function() {
     $('input').removeAttr('checked')
   })
 
-  $('#approve-all, #unapprove-all').click(function() {
+  $('#approve-all').click(function() {
     var allData = [],
         url;
     $.each($('input:checked'), function(index, eventId) {
@@ -35,11 +35,7 @@ $(document).ready(function() {
       allData.push(eventNum)
     })
 
-    if ($(this).attr('id') === 'approve-all') {
-      url = "/api/v1/approve"
-    } else {
-      url = "/api/v1/unapprove"
-    }
+    url = "/api/v1/approve"
 
     if (allData.toString() === [].toString()) {
       $('.target').text('Pick some events noob!')

@@ -16,7 +16,6 @@ Whattodo::Application.routes.draw do
       get '/all' => 'events#all'
       get '/curate' => 'events#curate', defaults: {format: 'html'}
       get '/approve' => 'events#approve', as: :approve, defaults: {format: 'js'}
-      get '/unapprove' => 'events#unapprove', as: :unapprove, defaults: {format: 'js'}
       get '/approved' => 'events#approved'
     end
   end
