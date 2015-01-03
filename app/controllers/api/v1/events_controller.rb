@@ -46,7 +46,11 @@ class API::V1::EventsController < ApplicationController
   end
 
   def approved
-    @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1)).where(approved: true)
+    @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1)).select{|e| e.approved == true}
+
+    filter_events
+
+    respond_with @eventsToday
   end
 
   def curate 
