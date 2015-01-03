@@ -18,23 +18,25 @@
     <th>DayOn</th>
     <th>DayEnd</th>
   </tr>
-  <% @eventsToday.each do |event| %>
-  <tr>
-    <td>
-      <%= check_box_tag(:event, "#{event.id}") %>
-    </td>
-    <td>
-      <%= label_tag(:event, "#{event.name.truncate(35)}", class: 'check-box') %>
-    </td>
-    <td><%= event.approved %></td>
-    <td><%= event.location %></td>
-    <td><%= event.price %></td>
-    <td><%= event.latitude %></td>
-    <td><%= event.longitude %></td>
-    <td><%= event.url %></td>
-    <td><%= event.url %></td>
-    <td><%= event.dayOn %></td>
-    <td><%= event.dayEnd %></td>
-  </tr>
-  <% end %>
+  <div id="json-events">
+    <% @eventsToday.each do |event| %>
+    <tr>
+      <td>
+        <%= check_box_tag(:event, "#{event.id}") %>
+      </td>
+      <td>
+        <%= label_tag(:event, "#{event.name.truncate(35)}", class: 'check-box') %>
+      </td>
+      <td><%= event.approved %></td>
+      <td><%= event.location %></td>
+      <td><%= event.price %></td>
+      <td><%= event.latitude %></td>
+      <td><%= event.longitude %></td>
+      <td><%= event.url %></td>
+      <td><%= event.image %></td>
+      <td><%= event.dayOn %></td>
+      <td><%= event.dayEnd %></td>
+    </tr>
+    <% end %>
+  </div>
 </table>
