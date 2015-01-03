@@ -422,7 +422,7 @@ class Event < ActiveRecord::Base
           location: location,
           price: price,
           dayOn: dayTimeStart,
-          dayEnd: Time.parse(dayTimeStart) + 4.hours,
+          dayEnd: DateTime.parse(dayTimeStart) + 4.hours,
           desc: description,
           categoryList: ["Music"],
           source: "Just Shows",
