@@ -5,7 +5,7 @@ class API::V1::EventsController < ApplicationController
 
   before_filter :restrict_access, except: :create_token
 
-  respond_to :json
+  respond_to :json, except: :curate
 
   # http_basic_authenticate_with name: Figaro.env.api_name, password: Figaro.env.api_password
 
@@ -25,6 +25,18 @@ class API::V1::EventsController < ApplicationController
     filter_events
 
     respond_with @eventsToday
+  end
+
+  def curate 
+    # NTD: ensure admin
+    @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
+
+    filter_events
+
+    respond_to do |format|
+      format.html{}
+    end
+
   end
 
   def tomorrow
