@@ -165,7 +165,11 @@ class Event < ActiveRecord::Base
   def self.getdata
   	 return [self.justshows,
              self.eventbrite,
-             self.eventful
+             self.eventful,
+             self.meetup,
+             self.blogto,
+             self.cityhall,
+             self.torontocom
   	].flatten
   end
 
