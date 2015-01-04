@@ -19,6 +19,27 @@ class Event < ActiveRecord::Base
     arrEvents.each do |event|
       puts event
       e = Event.new(event)
+
+      if e.dayEnd == "No end time specified"
+        if e.dayOn =~ /:/
+          timeStart = DateTime.parse(e.dayOn)
+          e.dayEnd = timeStart + 3.hours
+        else
+          e.dayOn = e.dayOn + ' 9:00 am'
+          e.dayEnd = e.dayOn + ' 5:00 pm'
+        end
+      elsif e.dayEnd =~ /\d/ && !(e.dayEnd =~ /:/)
+        #  has end date at least numbers.
+        if e.dayOn =~ /:/
+          #  if has start time then add three hours to end time no matter when day end is
+          timeStart = Time.parse(e.dayOn)
+          e.dayEnd = e.dayEnd + " #{timeStart + 3.hours}"
+        else
+          e.dayOn = e.dayOn + ' 9:00 am'
+          e.dayEnd = e.dayEnd + ' 5:00 pm'
+        end
+      end
+      
       unless e.location == "No address listed"
         if e.latitude == nil || e.longitude == nil 
           begin
@@ -144,11 +165,7 @@ class Event < ActiveRecord::Base
   def self.getdata
   	 return [self.justshows,
              self.eventbrite,
-             self.eventful,
-             self.meetup,
-             self.blogto,
-             self.cityhall,
-             self.torontocom
+             self.eventful
   	].flatten
   end
 
