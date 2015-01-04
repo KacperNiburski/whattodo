@@ -456,7 +456,7 @@ class Event < ActiveRecord::Base
         name = event.css('.event-name').text()
         location = event.css('.event-address').text()
         location = location== "" || location == nil ? 'Toronto, Canada' : location + ', Toronto, Canada'
-        dayTime = todaystr + " " + event.css('info-eventtime').text()
+        dayTime = todaystr + " " + event.css('.info-eventtime').text()
         descIncomplete = event.css('.event-summary').text()
         categoryList = Event.findCats(descIncomplete)
         categoryList = ["Misc"] if categoryList == nil || categoryList == ""
