@@ -11,3 +11,8 @@
  *= require_self
  *= require_tree .
  */
+
+ .event-image img {
+  width: 100px;
+  height: 100px;
+ }
