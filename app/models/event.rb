@@ -39,6 +39,11 @@ class Event < ActiveRecord::Base
           e.dayEnd = e.dayEnd + ' 5:00 pm'
         end
       end
+
+      if e.source == 'Meetup'
+        e.dayOn = e.dayOn - 5.hours
+        e.dayEnd = e.dayEnd - 5.hours
+      end
       
       unless e.location == "No address listed"
         if e.latitude == nil || e.longitude == nil 
