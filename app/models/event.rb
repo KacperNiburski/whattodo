@@ -45,111 +45,6 @@ class Event < ActiveRecord::Base
         e.dayEnd = e.dayEnd - 5.hours
       end
       
-      unless e.location == "No address listed"
-        if e.latitude == nil || e.longitude == nil 
-          begin
-            coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
-            e.latitude, e.longitude = coords[0], coords[1]
-            puts 'enter google'
-          rescue
-            fragment = e.location.gsub(',','').gsub('/','')
-            if fragment.scan(/Toronto/).length >= 2
-              fragment = fragment.split('Toronto',-1)[0]
-            else
-              fragment = fragment
-            end
-            url = URI.encode("http://nominatim.openstreetmap.org/search/" + fragment +"?format=json&addressdetails=1&limit=1")            
-
-            unless url == nil || url == " " || url == ''
-              puts 'enter nomaintim'
-              url = JSON.parse((open(url)).read)
-              coords = url[0]
-              e.latitude, e.longitude = coords["lat"].to_f, coords["lon"].to_f if coords != nil
-            end
-          end
-        end
-
-        #http://www.mapquestapi.com/geocoding/v1/address?key=Fmjtd|luurn1u8l9%2Cbw%3Do5-9wyx0a&callback=renderOptions&inFormat=json&outFormat=json&location=20,Duncan,Street,Toronto,Canada
-        if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || Event.last.latitude == e.latitude || e.latitude == nil
-          # http://dev.virtualearth.net/REST/v1/Locations?CountryRegion=CA&adminDistrict=ON&locality=Toronto&addressLine=20%Duncan%Street&key=
-          streetmapsString = URI.encode('http://www.mapquestapi.com/geocoding/v1/address?key=Fmjtd|luurn1u8l9%2Cbw%3Do5-9wyx0a&outFormat=json&location=' + e.location)
-
-          begin
-            puts streetmapsString
-            coords = JSON.parse(open(streetmapsString).read)
-            unless coords == nil || coords['results'].empty?
-              puts 'entering street maps'
-              coordsSpec = coords['results'][0]['locations'][0]['latLng']
-              e.latitude, e.longitude = coordsSpec['lat'], coordsSpec['lng']
-            end
-          rescue
-          end
-
-        end
-
-        # check if no events, if so then geocode. of if previous geocode gave wonky results or if similair to last event, to get variation. or if currently nil
-        if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || Event.last.latitude == e.latitude || e.latitude == nil
-          # http://dev.virtualearth.net/REST/v1/Locations?CountryRegion=CA&adminDistrict=ON&locality=Toronto&addressLine=20%Duncan%Street&key=
-          locationSplit = e.location.split(',')[0]
-          mapsUrl = "http://dev.virtualearth.net/REST/v1/Locations?CountryRegion=CA&adminDistrict=ON&locality=Toronto&addressLine=" + locationSplit + "&key=" + Figaro.env.maps_key
-
-          begin
-            coords = JSON.parse(open(URI.encode(mapsUrl)).read)
-            unless coords == nil || coords['resourceSets']['resources'].empty?
-              puts 'enter bing maps'
-              coordsSpec = coords['resourceSets']['resources'][0]['point']['coordinates']
-              e.latitude, e.longitude = coordsSpec[0], coordsSpec[1]
-            end
-          rescue
-          end
-
-        end
-
-        if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || e.latitude == nil
-          here_key = Figaro.env.here_key
-          here_secret = Figaro.env.here_secret
-          string = "http://geocoder.cit.api.here.com/6.2/geocode.json?app_id=" + here_key + "&app_code=" + here_secret +"&gen=8&searchtext=" + e.location.gsub(' ', '+').gsub(',', '')          
-          begin
-            coords = JSON.parse((open(string)).read)
-          rescue
-            string = URI.encode(string)
-            coords = JSON.parse((open(string)).read)
-          end
-          unless coords == nil || coords["Response"]["View"].length == 0
-            puts 'enter geocoder.cit'
-            coords = coords["Response"]["View"][0]["Result"][0]["Location"]["DisplayPosition"]
-            e.latitude, e.longitude = coords['Latitude'], coords['Longitude']
-          end
-        end
-
-        if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || e.latitude == nil
-          string = "http://api.tiles.mapbox.com/v4/geocode/mapbox.places/"+e.location.gsub('-','').gsub(',','').gsub('(','').gsub(')','').gsub(' ', '+')+".json?access_token=pk.eyJ1IjoicmFrc29uaWJzIiwiYSI6IjZ0TFFlUEUifQ._wLBBR-FcaQuIK-tnfU7-w"          
-          begin
-            coords = JSON.parse((open(string)).read)
-            unless coords == nil || coords['features'] == []
-              puts 'enter mapbox'
-              e.latitude, e.longitude = coords['features'][0]['center'][1], coords['features'][0]['center'][0]
-            end
-          rescue
-          end
-        end
-        
-        if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || e.latitude == nil
-          string = "https://api.geocod.io/v1/geocode?q=" + e.location.gsub('-','').gsub(',','').gsub('(','').gsub(')','').gsub(' ', '+') + "&api_key=cf88885cb459801b5a1b52aac3c89531b584934"          
-          begin
-            coords = JSON.parse((open(string)).read)
-            unless coords == nil || coords['results'] == []
-              puts 'enter geocoder'
-              e.latitude, e.longitude = coords['results'][0]['location']['lat'], coords['results'][0]['location']['lng']
-            end
-          rescue
-          end
-        end
-        
-        
-
-      end
-      
       e.uuid = SecureRandom.uuid
 
       e.save!
@@ -250,6 +145,112 @@ class Event < ActiveRecord::Base
     end
 
     return events
+  end
+
+  def self.geocodeEvent(e)
+    unless e.location == "No address listed"
+      if e.latitude == nil || e.longitude == nil 
+        begin
+          coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
+          e.latitude, e.longitude = coords[0], coords[1]
+          puts 'enter google'
+        rescue
+          fragment = e.location.gsub(',','').gsub('/','')
+          if fragment.scan(/Toronto/).length >= 2
+            fragment = fragment.split('Toronto',-1)[0]
+          else
+            fragment = fragment
+          end
+          url = URI.encode("http://nominatim.openstreetmap.org/search/" + fragment +"?format=json&addressdetails=1&limit=1")            
+
+          unless url == nil || url == " " || url == ''
+            puts 'enter nomaintim'
+            url = JSON.parse((open(url)).read)
+            coords = url[0]
+            e.latitude, e.longitude = coords["lat"].to_f, coords["lon"].to_f if coords != nil
+          end
+        end
+      end
+
+      #http://www.mapquestapi.com/geocoding/v1/address?key=Fmjtd|luurn1u8l9%2Cbw%3Do5-9wyx0a&callback=renderOptions&inFormat=json&outFormat=json&location=20,Duncan,Street,Toronto,Canada
+      if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || Event.last.latitude == e.latitude || e.latitude == nil
+        # http://dev.virtualearth.net/REST/v1/Locations?CountryRegion=CA&adminDistrict=ON&locality=Toronto&addressLine=20%Duncan%Street&key=
+        streetmapsString = URI.encode('http://www.mapquestapi.com/geocoding/v1/address?key=Fmjtd|luurn1u8l9%2Cbw%3Do5-9wyx0a&outFormat=json&location=' + e.location)
+
+        begin
+          puts streetmapsString
+          coords = JSON.parse(open(streetmapsString).read)
+          unless coords == nil || coords['results'].empty?
+            puts 'entering street maps'
+            coordsSpec = coords['results'][0]['locations'][0]['latLng']
+            e.latitude, e.longitude = coordsSpec['lat'], coordsSpec['lng']
+          end
+        rescue
+        end
+
+      end
+
+      # check if no events, if so then geocode. of if previous geocode gave wonky results or if similair to last event, to get variation. or if currently nil
+      if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || Event.last.latitude == e.latitude || e.latitude == nil
+        # http://dev.virtualearth.net/REST/v1/Locations?CountryRegion=CA&adminDistrict=ON&locality=Toronto&addressLine=20%Duncan%Street&key=
+        locationSplit = e.location.split(',')[0]
+        mapsUrl = "http://dev.virtualearth.net/REST/v1/Locations?CountryRegion=CA&adminDistrict=ON&locality=Toronto&addressLine=" + locationSplit + "&key=" + Figaro.env.maps_key
+
+        begin
+          coords = JSON.parse(open(URI.encode(mapsUrl)).read)
+          unless coords == nil || coords['resourceSets']['resources'].empty?
+            puts 'enter bing maps'
+            coordsSpec = coords['resourceSets']['resources'][0]['point']['coordinates']
+            e.latitude, e.longitude = coordsSpec[0], coordsSpec[1]
+          end
+        rescue
+        end
+
+      end
+
+      if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || e.latitude == nil
+        here_key = Figaro.env.here_key
+        here_secret = Figaro.env.here_secret
+        string = "http://geocoder.cit.api.here.com/6.2/geocode.json?app_id=" + here_key + "&app_code=" + here_secret +"&gen=8&searchtext=" + e.location.gsub(' ', '+').gsub(',', '')          
+        begin
+          coords = JSON.parse((open(string)).read)
+        rescue
+          string = URI.encode(string)
+          coords = JSON.parse((open(string)).read)
+        end
+        unless coords == nil || coords["Response"]["View"].length == 0
+          puts 'enter geocoder.cit'
+          coords = coords["Response"]["View"][0]["Result"][0]["Location"]["DisplayPosition"]
+          e.latitude, e.longitude = coords['Latitude'], coords['Longitude']
+        end
+      end
+
+      if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || e.latitude == nil
+        string = "http://api.tiles.mapbox.com/v4/geocode/mapbox.places/"+e.location.gsub('-','').gsub(',','').gsub('(','').gsub(')','').gsub(' ', '+')+".json?access_token=pk.eyJ1IjoicmFrc29uaWJzIiwiYSI6IjZ0TFFlUEUifQ._wLBBR-FcaQuIK-tnfU7-w"          
+        begin
+          coords = JSON.parse((open(string)).read)
+          unless coords == nil || coords['features'] == []
+            puts 'enter mapbox'
+            e.latitude, e.longitude = coords['features'][0]['center'][1], coords['features'][0]['center'][0]
+          end
+        rescue
+        end
+      end
+      
+      if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || e.latitude == nil
+        string = "https://api.geocod.io/v1/geocode?q=" + e.location.gsub('-','').gsub(',','').gsub('(','').gsub(')','').gsub(' ', '+') + "&api_key=cf88885cb459801b5a1b52aac3c89531b584934"          
+        begin
+          coords = JSON.parse((open(string)).read)
+          unless coords == nil || coords['results'] == []
+            puts 'enter geocoder'
+            e.latitude, e.longitude = coords['results'][0]['location']['lat'], coords['results'][0]['location']['lng']
+          end
+        rescue
+        end
+      end
+    end
+
+    e.save!
   end
 
   def self.nowmagazine
@@ -583,35 +584,39 @@ class Event < ActiveRecord::Base
     data = JSON.parse((open(string)).read)
     eventAll = []
     data.each do |event|
-      name = event["title"]
-      dayOn = DateTime.parse(event['dtstart']).to_time
-      dayEnd = DateTime.parse(event['dtend']).to_time
-      url = event["url"]
-      source = event["source"]
-      location = event["location"]
-      location = location == "" || location == nil ? "No address listed" : location + ", Toronto, Canada"
-      desc = event["description"] || "No description"
-      desc = ActionView::Base.full_sanitizer.sanitize(desc).gsub("\n",'').gsub("\t", "").gsub("\r","").strip
-      categoryList = event['categories'].split(',')
-      categoryList = ["Misc"] if categoryList == nil || categoryList == "" || categoryList == " "
-      image = "http://i.imgur.com/ixz8pZT.png?1"
-      latitude = event['lat']
-      longitude = event['lon']
+      dayOn = event['dtstart']
+      dayEnd = event['dtend']
+      if ( Date.parse(dayOn) >= Date.today && Date.parse(dayOn) <= ( Date.today + 8 ) ) || ( Date.today >= Date.parse(dayOn) && Date.today <= Date.parse(dayEnd) )
+        dayOn = DateTime.parse(event['dtstart']).to_time
+        dayEnd = DateTime.parse(event['dtend']).to_time
+        name = event["title"]
+        url = event["url"]
+        source = event["source"]
+        location = event["location"]
+        location = location == "" || location == nil ? "No address listed" : location + ", Toronto, Canada"
+        desc = event["description"] || "No description"
+        desc = ActionView::Base.full_sanitizer.sanitize(desc).gsub("\n",'').gsub("\t", "").gsub("\r","").strip
+        categoryList = event['categories'].split(',')
+        categoryList = ["Misc"] if categoryList == nil || categoryList == "" || categoryList == " "
+        image = "http://i.imgur.com/ixz8pZT.png?1"
+        latitude = event['lat']
+        longitude = event['lon']
 
-      eventAll.push({
-        name: name,
-        url: url,
-        location: location, 
-        price: "Price not listed",
-        dayOn: dayOn,
-        dayEnd: dayEnd,
-        desc: desc,
-        categoryList: categoryList,
-        image: image,
-        source: "Elmcity",
-        latitude: latitude,
-        longitude: longitude
-      })
+        eventAll.push({
+          name: name,
+          url: url,
+          location: location, 
+          price: "Price not listed",
+          dayOn: dayOn,
+          dayEnd: dayEnd,
+          desc: desc,
+          categoryList: categoryList,
+          image: image,
+          source: "Elmcity",
+          latitude: latitude,
+          longitude: longitude
+        })
+      end
     end
 
     return eventAll
