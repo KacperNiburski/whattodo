@@ -36,6 +36,12 @@ gem 'figaro'
 gem "rspec-rails"
 gem 'geokit'
 
+gem 'sidekiq'
+gem 'multi_json', '1.5.1'
+gem 'oj'
+gem 'momentjs-rails'
+gem 'sinatra', :require => nil
+
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
