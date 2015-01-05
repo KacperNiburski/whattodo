@@ -25,7 +25,7 @@
         <%= check_box_tag(:event, "#{event.id}") %>
       </td>
       <td>
-        <%= label_tag(:event, "#{event.name.truncate(35)}", class: 'check-box') %>
+        <%= label_tag(:event, "#{event.name}", class: 'check-box') %>
       </td>
       <td><%= event.approved %></td>
       <td><%= event.location %></td>
