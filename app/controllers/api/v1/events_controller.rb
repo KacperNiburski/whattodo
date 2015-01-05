@@ -40,6 +40,8 @@ class API::V1::EventsController < ApplicationController
 
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
 
+    @eventsToday = [@eventsToday.select{|e| e.approved == true}, @eventsToday.select{|e| e.approved == false}].flatten
+
     filter_events
     
     respond_to do |format|
@@ -58,6 +60,8 @@ class API::V1::EventsController < ApplicationController
   def curate 
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
     
+    @eventsToday = [@eventsToday.select{|e| e.approved == true}, @eventsToday.select{|e| e.approved == false}].flatten
+
     filter_events
 
     respond_to do |format|

@@ -47,7 +47,7 @@ $(document).ready(function() {
             +'<td>'+eventArr['price']+'</td>'
             +'<td>'+eventArr['latitude']+'</td>'
             +'<td>'+eventArr['longitude']+'</td>'
-            +'<td>'+eventArr['url']+'</td>'
+            +'<td><a href="'+eventArr['url']+'">'+eventArr['url']+'</a></td>'
             +'<td>'+eventArr['image']+'</td>'
             +'<td>'+eventArr['dayOn']+'</td>'
             +'<td>'+eventArr['dayEnd']+'</td>'
