@@ -52,7 +52,7 @@ class API::V1::EventsController < ApplicationController
   def approved
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1)).select{|e| e.approved == true}
 
-    filter_events
+    filter_events(true)
 
     respond_with @eventsToday
   end
@@ -62,7 +62,7 @@ class API::V1::EventsController < ApplicationController
     
     @eventsToday = [@eventsToday.select{|e| e.approved == true}, @eventsToday.select{|e| e.approved == false}].flatten
 
-    filter_events
+    filter_events(true)
 
     respond_to do |format|
       format.html{}
@@ -96,10 +96,10 @@ class API::V1::EventsController < ApplicationController
 
   private
 
-    def filter_events
+    def filter_events(default = false)
       @eventsToday = @eventsToday.select{|event| event.categoryList.include?(params[:cat])} if params[:cat]
       @eventsToday = @eventsToday[0..params[:limit].to_i] if params[:limit]
-      @eventsToday = @eventsToday.select{|event| event.latitude != nil }
+      @eventsToday = default ? @eventsToday : @eventsToday.select{|event| event.latitude != nil }
     end
 
     def restrict_access

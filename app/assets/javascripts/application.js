@@ -1,4 +1,5 @@
 //= require jquery
+//= require moment
 //= require_tree .
 $(document).ready(function() {
   $('.button').click(function() {
@@ -39,7 +40,7 @@ $(document).ready(function() {
           $('.all-output').html('')
           var jsonData = data.responseJSON['events']
           var htmlString = '<table><tr><th>Approve/Unapprove</th><th>Name</th><th>Approved</th><th>Location</th><th>Price</th><th>Latitude</th><th>Longitude</th><th>Url</th><th>Image</th><th>DayOn</th><th>DayEnd</th></tr>'
-          $.each(jsonData, function(index, eventArr) {
+          $.each(jsonData, function(index, eventArr) {            
             htmlString += '<tr><td><input id="event" name="event" type="checkbox" value="'+eventArr['ruby_id']+'"></td>'
             + '<td><label class="check-box" for="event">'+eventArr['name']+'</label></td>'
             +'<td>'+eventArr['approved']+'</td>'
@@ -48,7 +49,7 @@ $(document).ready(function() {
             +'<td>'+eventArr['latitude']+'</td>'
             +'<td>'+eventArr['longitude']+'</td>'
             +'<td><a href="'+eventArr['url']+'">'+eventArr['url']+'</a></td>'
-            +'<td><img src="'+eventArr['image']+'"></td>'
+            +'<td class="event-image"><img src="'+eventArr['image']+'"></td>'
             +'<td>'+eventArr['dayOn']+'</td>'
             +'<td>'+eventArr['dayEnd']+'</td>'
             +'</tr>'
