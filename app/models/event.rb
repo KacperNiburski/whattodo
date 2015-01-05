@@ -19,6 +19,27 @@ class Event < ActiveRecord::Base
     arrEvents.each do |event|
       puts event
       e = Event.new(event)
+
+      if e.dayEnd == "No end time specified"
+        if e.dayOn =~ /:/
+          timeStart = DateTime.parse(e.dayOn)
+          e.dayEnd = timeStart + 3.hours
+        else
+          e.dayOn = e.dayOn + ' 9:00 am'
+          e.dayEnd = e.dayOn + ' 5:00 pm'
+        end
+      elsif e.dayEnd =~ /\d/ && !(e.dayEnd =~ /:/)
+        #  has end date at least numbers.
+        if e.dayOn =~ /:/
+          #  if has start time then add three hours to end time no matter when day end is
+          timeStart = Time.parse(e.dayOn)
+          e.dayEnd = e.dayEnd + " #{timeStart + 3.hours}"
+        else
+          e.dayOn = e.dayOn + ' 9:00 am'
+          e.dayEnd = e.dayEnd + ' 5:00 pm'
+        end
+      end
+      
       unless e.location == "No address listed"
         if e.latitude == nil || e.longitude == nil 
           begin
@@ -422,7 +443,7 @@ class Event < ActiveRecord::Base
           location: location,
           price: price,
           dayOn: dayTimeStart,
-          dayEnd: Time.parse(dayTimeStart) + 4.hours,
+          dayEnd: DateTime.parse(dayTimeStart) + 4.hours,
           desc: description,
           categoryList: ["Music"],
           source: "Just Shows",
@@ -456,7 +477,7 @@ class Event < ActiveRecord::Base
         name = event.css('.event-name').text()
         location = event.css('.event-address').text()
         location = location== "" || location == nil ? 'Toronto, Canada' : location + ', Toronto, Canada'
-        dayTime = todaystr + " " + event.css('info-eventtime').text()
+        dayTime = todaystr + " " + event.css('.info-eventtime').text()
         descIncomplete = event.css('.event-summary').text()
         categoryList = Event.findCats(descIncomplete)
         categoryList = ["Misc"] if categoryList == nil || categoryList == ""

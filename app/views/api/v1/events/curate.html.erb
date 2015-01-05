@@ -1,0 +1,9 @@
+<button id="select-all">Select all</button> <br>
+<button id="uncheck">Uncheck all</button> <br>
+<button id="approve-all">Toggle Approving</button> <br>
+
+<div class="target"></div>
+
+<div class="all-output">
+  <%= render 'allEvents', locals: {eventsToday: @eventsToday} %>
+</div>

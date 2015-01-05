@@ -5,6 +5,7 @@ json.events events do |event|
   json.ruby_id event.id
   json.uuid event.uuid
   json.name event.name
+  json.approved event.approved
   json.location event.location
   json.price event.price
   if event.dayOn == "No start time specified" && event.dayEnd == "No end time specified"
@@ -16,8 +17,8 @@ json.events events do |event|
       json.dayEnd Time.parse(event.dayEnd).to_i
     end
   else
-    json.dayOn event.dayOn
-    json.dayEnd event.dayEnd
+    json.dayOn Time.parse(event.dayOn).to_i
+    json.dayEnd Time.parse(event.dayEnd).to_i
   end
   json.latitude event.latitude
   json.longitude event.longitude

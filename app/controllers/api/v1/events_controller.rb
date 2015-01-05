@@ -3,9 +3,9 @@ class API::V1::EventsController < ApplicationController
   helper_method :getMatchingDayEvents
   helper_method :uniqueEvents
 
-  before_filter :restrict_access, except: :create_token
+  before_filter :restrict_access, except: [:create_token, :approve, :curate]
 
-  respond_to :json
+  respond_to :json, except: :curate
 
   # http_basic_authenticate_with name: Figaro.env.api_name, password: Figaro.env.api_password
 
@@ -27,6 +27,45 @@ class API::V1::EventsController < ApplicationController
     respond_with @eventsToday
   end
 
+  def approve
+    @events = params[:events].map{|e| Event.find(e) }
+    @events.each do |e| 
+      if e.approved == true
+        e.approved = false
+      else
+        e.approved = true
+      end
+      e.save
+    end
+
+    @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
+
+    filter_events
+    
+    respond_to do |format|
+      format.json { }
+    end
+  end
+
+  def approved
+    @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1)).select{|e| e.approved == true}
+
+    filter_events
+
+    respond_with @eventsToday
+  end
+
+  def curate 
+    @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
+    
+    filter_events
+
+    respond_to do |format|
+      format.html{}
+    end
+
+  end
+
   def tomorrow
     @eventsToday = uniqueEvents(getMatchingDayEvents(Date.today + 1))
     
@@ -45,6 +84,7 @@ class API::V1::EventsController < ApplicationController
 
   def partyEvents
     @eventsToday = uniqueEvents(getMatchingDayEvents).select{|event| event.source == "Nowmagazine" || event.source == "Club Crawlers" || event.source == "Just Shows"}
+
     filter_events
     
     respond_with @eventsToday
@@ -62,6 +102,7 @@ class API::V1::EventsController < ApplicationController
       api_key = APIKey.find_by_access_token(params[:access_token])
       expired = api_key != nil && api_key.expires_on != nil && Date.today < Date.parse(api_key.expires_on)
       head :unauthorized unless api_key && expired
+      session[:access_token] = params[:access_token]
     end
 
     # def restrict_access
