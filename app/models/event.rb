@@ -253,9 +253,14 @@ class Event < ActiveRecord::Base
   end
 
   def self.nowmagazine
-    puts 'Running nowmagazine'
-    # http://nowtoronto.com/sesarch/event/all/
-    eventsAll = Scraper::NowMagazine.get_events
+    begin
+      puts 'Running nowmagazine'
+      # http://nowtoronto.com/sesarch/event/all/
+      eventsAll = Scraper::NowMagazine.get_events
+    rescue
+       puts 'Rerunning nowmagazine because error'
+       eventsAll = Scraper::NowMagazine.get_events
+    end
   end
 
   def self.eventbrite

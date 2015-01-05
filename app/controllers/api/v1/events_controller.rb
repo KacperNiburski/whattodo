@@ -42,7 +42,11 @@ class API::V1::EventsController < ApplicationController
 
     @eventsToday = [@eventsToday.select{|e| e.approved == true}, @eventsToday.select{|e| e.approved == false}].flatten
 
-    filter_events
+    @eventsToday.each do |e|
+      GeocodeWorker.perform_async(e.id)
+    end
+
+    filter_events(true)
     
     respond_to do |format|
       format.json { }
