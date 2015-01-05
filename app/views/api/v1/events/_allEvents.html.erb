@@ -32,7 +32,7 @@
       <td><%= event.price %></td>
       <td><%= event.latitude %></td>
       <td><%= event.longitude %></td>
-      <td><%= event.url %></td>
+      <td><a href="#{event.url}"><%= event.url %></td>
       <td class="event-image"><%= image_tag event.image %></td>
       <td><%= event.dayOn %></td>
       <td><%= event.dayEnd %></td>
