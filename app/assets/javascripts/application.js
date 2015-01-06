@@ -1,5 +1,6 @@
 //= require jquery
 //= require moment
+//= require snabbt
 //= require_tree .
 $(document).ready(function() {
   $('.button').click(function() {
@@ -30,10 +31,22 @@ $(document).ready(function() {
       $('.target').text('Pick some events noob!')
     } else {
       $('.target').text('')
+      $('.all-output').html('<h1>Geocoding approved Events</h1>')
+      $('.all-output').snabbt({
+        position: [100, 0, 0],
+        easing: 'ease'
+      }).then({
+        from_rotation: [0, 0, -2*Math.PI],
+        easing: 'spring',
+        spring_constant: 0.2,
+        spring_deaccelaration: 0.95,
+      });
       $.ajax({
         url: url,
         type: "POST",
-        beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+        beforeSend: function(xhr) {
+          xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+        },
         dataType: "json",
         data: {events: allData },
         complete: function(data) {
