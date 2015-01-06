@@ -36,15 +36,16 @@ class API::V1::EventsController < ApplicationController
         e.approved = true
       end
       e.save
+
+      if e.approved == true
+        Event.geocodeEvent(e)
+        sleep(1)
+      end
     end
 
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
 
     @eventsToday = [@eventsToday.select{|e| e.approved == true}, @eventsToday.select{|e| e.approved == false}].flatten
-
-    @eventsToday.each do |e|
-      GeocodeWorker.perform_async(e.id)
-    end
 
     filter_events(true)
     
@@ -56,7 +57,7 @@ class API::V1::EventsController < ApplicationController
   def approved
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1)).select{|e| e.approved == true}
 
-    filter_events(true)
+    filter_events
 
     respond_with @eventsToday
   end
