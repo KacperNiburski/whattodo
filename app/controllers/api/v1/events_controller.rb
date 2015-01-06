@@ -36,11 +36,18 @@ class API::V1::EventsController < ApplicationController
         e.approved = true
       end
       e.save
+
+      if e.approved == true
+        Event.geocodeEvent(e)
+        sleep(1)
+      end
     end
 
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
 
-    filter_events
+    @eventsToday = [@eventsToday.select{|e| e.approved == true}, @eventsToday.select{|e| e.approved == false}].flatten
+
+    filter_events(true)
     
     respond_to do |format|
       format.json { }
@@ -58,7 +65,9 @@ class API::V1::EventsController < ApplicationController
   def curate 
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
     
-    filter_events
+    @eventsToday = [@eventsToday.select{|e| e.approved == true}, @eventsToday.select{|e| e.approved == false}].flatten
+
+    filter_events(true)
 
     respond_to do |format|
       format.html{}
@@ -92,10 +101,10 @@ class API::V1::EventsController < ApplicationController
 
   private
 
-    def filter_events
+    def filter_events(default = false)
       @eventsToday = @eventsToday.select{|event| event.categoryList.include?(params[:cat])} if params[:cat]
       @eventsToday = @eventsToday[0..params[:limit].to_i] if params[:limit]
-      @eventsToday = @eventsToday.select{|event| event.latitude != nil }
+      @eventsToday = default ? @eventsToday : @eventsToday.select{|event| event.latitude != nil }
     end
 
     def restrict_access

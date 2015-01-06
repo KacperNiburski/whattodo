@@ -1,3 +1,5 @@
+require 'sidekiq/web'
+
 Whattodo::Application.routes.draw do
   root 'welcome#index'
   get "/whattodo" => "welcome#home"
@@ -7,7 +9,8 @@ Whattodo::Application.routes.draw do
 
   # ttp://api.localhost.com/events
   namespace :api, defaults: {format: 'json'} do
-    namespace :v1 do 
+    namespace :v1 do       
+      mount Sidekiq::Web => '/sidekiq'
       get '/create_token' => "events#create_token"
       resources :events
       get '/today' => "events#today"
