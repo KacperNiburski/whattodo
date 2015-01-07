@@ -17,8 +17,8 @@ namespace :get_events do
     meetups = Event.where(source: 'Meetup')
 
     meetups.each do |event|
-      event.dayOn = DateTime.parse(event.dayOn) - 5.hours
-      event.dayEnd = DateTime.parse(event.dayEnd) - 5.hours
+      event.dayOn = DateTime.parse(event.dayOn) + 10.hours
+      event.dayEnd = DateTime.parse(event.dayEnd) + 10.hours
       event.save!
     end
 
@@ -33,8 +33,8 @@ namespace :get_events do
     nowmagazines = Event.where(source: 'Nowmagazine')
 
     nowmagazines.each do |event|
-      event.dayOn = DateTime.parse(event.dayOn) - 5.hours
-      event.dayEnd = DateTime.parse(event.dayEnd) - 5.hours
+      event.dayOn = DateTime.parse(event.dayOn) + 10.hours
+      event.dayEnd = DateTime.parse(event.dayEnd) + 10.hours
       event.save!
     end
 
