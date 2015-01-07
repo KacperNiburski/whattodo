@@ -10,15 +10,15 @@ json.events events do |event|
   json.price event.price
   if event.dayOn == "No start time specified" && event.dayEnd == "No end time specified"
     if event.dayOn.length < 10
-      json.dayOn event.dayOn
-      json.dayEnd event.dayEnd
+      json.dayOn (DateTime.parse(event.dayOn)+5.hours).to_i
+      json.dayEnd (DateTime.parse(event.dayOn)+5.hours).to_i
     else
-      json.dayOn Time.parse(event.dayOn).to_i
-      json.dayEnd Time.parse(event.dayEnd).to_i
+      json.dayOn (DateTime.parse(event.dayOn)+5.hours).to_i
+      json.dayEnd (DateTime.parse(event.dayEnd)+5.hours).to_i
     end
   else
-    json.dayOn Time.parse(event.dayOn).to_i
-    json.dayEnd Time.parse(event.dayEnd).to_i
+    json.dayOn (DateTime.parse(event.dayOn)+5.hours).to_i
+    json.dayEnd (DateTime.parse(event.dayEnd)+5.hours).to_i
   end
   json.latitude event.latitude
   json.longitude event.longitude
