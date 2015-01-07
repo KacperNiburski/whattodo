@@ -488,7 +488,16 @@ class Event < ActiveRecord::Base
         name = event.css('.event-name').text()
         location = event.css('.event-address').text()
         location = location== "" || location == nil ? 'Toronto, Canada' : location + ', Toronto, Canada'
-        dayTime = todaystr + " " + event.css('.info-eventtime').text()
+        dayTime = event.css('.info-eventtime').text().split(/\s-\s/)
+
+        if dayTime.length >= 2 
+          dayEnd = DateTime.parse(todaystr+ ' '+dayTime[1])
+          dayTime = DateTime.parse(todaystr+ ' '+dayTime[0])
+        else
+          dayEnd = DateTime.parse(todaystr+ ' '+dayTime[0]) + 3.hours
+          dayTime = DateTime.parse(todaystr+ ' '+dayTime[0])
+        end
+    
         descIncomplete = event.css('.event-summary').text()
         categoryList = Event.findCats(descIncomplete)
         categoryList = ["Misc"] if categoryList == nil || categoryList == ""
@@ -504,7 +513,7 @@ class Event < ActiveRecord::Base
           location: location, 
           price: 'Check listing url!',
           dayOn: dayTime,
-          dayEnd: "No end time specified",
+          dayEnd: dayEnd,
           desc: descIncomplete,
           categoryList: categoryList,
           source: "Blog.to",
