@@ -66,14 +66,14 @@ class Event < ActiveRecord::Base
   end
 
   def self.getdata
-  	 return [self.justshows,
-             self.eventbrite,
-             self.eventful,
-             self.meetup,
-             self.blogto,
-             self.cityhall,
-             self.torontocom
-  	].flatten
+    return [self.justshows,
+            self.eventbrite,
+            self.eventful,
+            self.meetup,
+            self.blogto,
+            self.cityhall,
+            self.torontocom
+           ].flatten
   end
 
   def self.getdata_two
@@ -155,7 +155,7 @@ class Event < ActiveRecord::Base
       if e.latitude == nil || e.longitude == nil 
         begin
           coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
-          e.latitude, e.longitude = coords[0], coords[1]
+          e.latitude, e.longitude = coords.lat, coords.lng
           puts 'enter google'
         rescue
           fragment = e.location.gsub(',','').gsub('/','')
