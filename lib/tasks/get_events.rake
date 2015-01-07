@@ -24,4 +24,20 @@ namespace :get_events do
 
     puts "Fixed #{meetups.count} meetups"
   end
+
+
+  desc 'Fix current nowmagazines'
+  task :fix_now => :environment do 
+    puts 'Fixing meetup'
+
+    nowmagazines = Event.where(source: 'Nowmagazine')
+
+    nowmagazines.each do |event|
+      event.dayOn = DateTime.parse(event.dayOn) - 5.hours
+      event.dayEnd = DateTime.parse(event.dayEnd) - 5.hours
+      event.save!
+    end
+
+    puts "Fixed #{nowmagazines.count} nowmagazines"
+  end
 end
