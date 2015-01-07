@@ -152,7 +152,7 @@ class Event < ActiveRecord::Base
       if e.latitude == nil || e.longitude == nil 
         begin
           coords = Geokit::Geocoders::GoogleGeocoder.geocode e.location
-          e.latitude, e.longitude = coords.lat, coords.lng
+          e.latitude, e.longitude = coords[0], coords[1]
           puts 'enter google'
         rescue
           fragment = e.location.gsub(',','').gsub('/','')
