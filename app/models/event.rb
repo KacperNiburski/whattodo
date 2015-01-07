@@ -41,6 +41,9 @@ class Event < ActiveRecord::Base
       end
 
       if e.source == 'Meetup' || e.source == 'Nowmagazine'
+        e.dayOn = e.dayOn - 5.hours
+        e.dayEnd = e.dayEnd - 5.hours
+      elsif e.source == 'Nowmagazine' || e.source == 'Blog.to'
         e.dayOn = e.dayOn + 5.hours
         e.dayEnd = e.dayEnd + 5.hours
       end
