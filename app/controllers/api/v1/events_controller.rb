@@ -39,7 +39,6 @@ class API::V1::EventsController < ApplicationController
 
       if e.approved == true
         Event.geocodeEvent(e)
-        sleep(1)
       end
     end
 
