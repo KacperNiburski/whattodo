@@ -20,22 +20,23 @@
   </tr>
   <div id="json-events">
     <% @eventsToday.each do |event| %>
+    <td>
+  <%= check_box_tag(:event, "#{event.id}") %>
+</td>
+<td>
+  <%= label_tag(:event, "#{event.name}", class: 'check-box') %>
+</td>
     <tr>
-      <td>
-        <%= check_box_tag(:event, "#{event.id}") %>
-      </td>
-      <td>
-        <%= label_tag(:event, "#{event.name}", class: 'check-box') %>
-      </td>
-      <td><%= event.approved %></td>
-      <td><%= event.location %></td>
-      <td><%= event.price %></td>
-      <td><%= event.latitude %></td>
-      <td><%= event.longitude %></td>
-      <td><a href="<%= event.url %>"><%= event.url %></td>
-      <td class="event-image"><%= image_tag event.image %></td>
-      <td><%= event.dayOn %></td>
-      <td><%= event.dayEnd %></td>
+    <% simple_form_for edit_api_v1_event_url(event), remote: true do |f|%>
+      <td><%= f.input :location %></td>
+      <td><%= f.input :price %></td>
+      <td><%= f.input :latitude %></td>
+      <td><%= f.input :longitude %></td>
+      <td><%= f.input :url %></td>
+      <td><%= f.input :image %></td>
+      <td><%= f.input :dayOn %></td>
+      <td><%= f.input :dayEnd %></td>
+    <% end %>
     </tr>
     <% end %>
   </div>

@@ -27,6 +27,9 @@ class API::V1::EventsController < ApplicationController
     respond_with @eventsToday
   end
 
+  def update
+  end
+
   def approve
     @events = params[:events].map{|e| Event.find(e) }
     @events.each do |e| 
