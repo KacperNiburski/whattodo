@@ -16,3 +16,8 @@
   width: 100px;
   height: 100px;
  }
+
+ input.string {
+  width: 100%;
+  margin: 10px;
+ }
