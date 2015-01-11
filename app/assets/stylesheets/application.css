@@ -24,3 +24,7 @@
  div.input {
   margin: 10px;
  }
+
+ .form-new-event {
+  display: none;
+ }

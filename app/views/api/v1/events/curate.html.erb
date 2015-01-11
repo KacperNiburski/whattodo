@@ -2,8 +2,11 @@
 <button id="uncheck">Uncheck all</button> <br>
 <button id="approve-all">Toggle Approving</button> <br>
 
+<h1> Refresh the page after any change for now. Just in case </h1>
+
 <div class="target"></div>
 
+<button class='click-create'>Create Event </button>
 <div class="form-new-event">
   <%= simple_form_for @event, :url => api_v1_events_path, :method => :post do |f| %>
     <span><%= f.input :name, input_html: {value: "Toronto's best event"} %> </span>
@@ -22,5 +25,6 @@
 </div>
 
 <div class="all-output">
+  <h3> Edit/Approve Events </h3>
   <%= render 'allEvents', locals: {eventsToday: @eventsToday} %>
 </div>

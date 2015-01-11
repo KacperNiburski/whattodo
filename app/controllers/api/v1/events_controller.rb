@@ -88,6 +88,8 @@ class API::V1::EventsController < ApplicationController
     
     @eventsToday = [@eventsToday.select{|e| e.approved == true}, @eventsToday.select{|e| e.approved == false}].flatten
 
+    order_events
+
     @event =  Event.new()
 
     filter_events(true)
@@ -123,6 +125,10 @@ class API::V1::EventsController < ApplicationController
   end
 
   private
+
+    def order_events
+      @eventsToday = [@eventsToday.select{|e| e.source == "Club Crawlers"}, @eventsToday.select{|e| e.source == 'Just Shows'}, @eventsToday.select{|e| e.source == 'Nowmagazine'}, @eventsToday.select{|e| e.source == 'Blog.to'}, @eventsToday.select{|e| e.source == 'City Hall'}, @eventsToday.select{|e| e.source == 'Eventbrite'}, @eventsToday.select{|e| e.source == 'Meetup'}].flatten
+    end
 
     def event_params
       params.require(:event).permit(:name, :price, :location, :dayOn, :dayEnd, :latitude, :longitude, :url, :image, :categoryList)
