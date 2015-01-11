@@ -40,6 +40,12 @@ class API::V1::EventsController < ApplicationController
   end
 
   def update
+    @event = Event.find(params[:id])
+    if @event.update_attributes(event_params)
+      redirect_to api_v1_curate_path
+    else
+      redirect_to api_v1_curate_path
+    end
   end
 
   def approve

@@ -24,10 +24,10 @@
       <td>
         <%= check_box_tag(:event, "#{event.id}") %>
       </td>
+    <%= simple_form_for event, url: api_v1_event_path(event), method: :put, remote: true do |f|%>
       <td>
-        <%= label_tag(:event, "#{event.name}", class: 'check-box') %>
+        <%= f.input :name, label: false, class: 'check-box' %>
       </td>
-    <%= simple_form_for event, url: edit_api_v1_event_url(event), method: :post, remote: true do |f|%>
       <td> <%= event.approved %> </td>
       <td><%= f.input :location, label: false %></td>
       <td><%= f.input :price, label: false %></td>
@@ -37,6 +37,7 @@
       <td class="event-image"><%= f.input :image, label: false %><%= image_tag event.image %></td>
       <td><%= f.input :dayOn, label: false %></td>
       <td><%= f.input :dayEnd, label: false %></td>
+      <td> <%= f.button :submit, 'Edit Event' %> </td>
     <% end %>
     </tr>
     <% end %>
