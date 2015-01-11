@@ -3,7 +3,7 @@ class API::V1::EventsController < ApplicationController
   helper_method :getMatchingDayEvents
   helper_method :uniqueEvents
 
-  before_filter :restrict_access, except: [:create_token, :approve, :curate]
+  before_filter :restrict_access, except: [:create_token, :approve, :curate, :create, :new, :edit, :update]
 
   respond_to :json, except: :curate
 
@@ -69,6 +69,8 @@ class API::V1::EventsController < ApplicationController
     
     @eventsToday = [@eventsToday.select{|e| e.approved == true}, @eventsToday.select{|e| e.approved == false}].flatten
 
+    @event =  Event.new()
+
     filter_events(true)
 
     respond_to do |format|
@@ -102,6 +104,10 @@ class API::V1::EventsController < ApplicationController
   end
 
   private
+
+    def event_params
+      params.require(:event).permit(:name, :price, :location, :dayOn, :dayEnd, :latitude, :longitude, :url, :image, :categoryList)
+    end
 
     def filter_events(default = false)
       @eventsToday = @eventsToday.select{|event| event.categoryList.include?(params[:cat])} if params[:cat]

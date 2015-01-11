@@ -15,6 +15,7 @@ module Scraper
       data.each do |event|
 
         name = event.css('.event-info h2').text()
+        name = ActionView::Base.full_sanitizer.sanitize(name)
         image = "http://www.clubcrawlers.com" + event.css('.hov img').attribute('src').value
         locationAndDate = event.css('.event-info h3').text()
         #  checks if Dec. or something like that, so then know if Saturday or actual date for event
