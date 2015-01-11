@@ -18,6 +18,9 @@
  }
 
  input.string {
-  width: 100%;
+  width: 150px;
+ }
+
+ div.input {
   margin: 10px;
  }

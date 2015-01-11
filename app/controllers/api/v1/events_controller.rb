@@ -1,4 +1,5 @@
 class API::V1::EventsController < ApplicationController
+  protect_from_forgery with: :null_session
   helper_method :getMatchingEvents
   helper_method :getMatchingDayEvents
   helper_method :uniqueEvents
