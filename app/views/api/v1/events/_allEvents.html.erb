@@ -6,6 +6,7 @@
     <th>
       Name
     </th>
+    <th>Image</th>
     <th>Approved</th>
     <th>
       Location
@@ -14,7 +15,6 @@
     <th>Latitude</th>
     <th>Longitude</th>
     <th>Url</th>
-    <th>Image</th>
     <th>DayOn</th>
     <th>DayEnd</th>
     <th>Edit Event</th>
@@ -29,13 +29,13 @@
       <td>
         <%= f.input :name, label: false, class: 'check-box' %>
       </td>
+      <td class="event-image"><%= f.input :image, label: false %><%= image_tag event.image %></td>
       <td> <%= event.approved %> </td>
       <td><%= f.input :location, label: false %></td>
       <td><%= f.input :price, label: false %></td>
       <td><%= f.input :latitude, label: false %></td>
       <td><%= f.input :longitude, label: false %></td>
       <td><a href="#{event.url}"> <%= event.url %></a><%= f.input :url, label: false %></td>
-      <td class="event-image"><%= f.input :image, label: false %><%= image_tag event.image %></td>
       <td><%= f.input :dayOn, label: false %></td>
       <td><%= f.input :dayEnd, label: false %></td>
       <td> <%= f.button :submit, 'Edit Event' %> </td>
