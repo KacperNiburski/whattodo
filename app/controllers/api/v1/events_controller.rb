@@ -27,6 +27,18 @@ class API::V1::EventsController < ApplicationController
     respond_with @eventsToday
   end
 
+  def create
+    @event = Event.create(event_params)
+    @event.uuid = SecureRandom.uuid
+    @event.source = "Self"
+    @event.categoryList = ['Party']
+    if @event.save
+      redirect_to api_v1_curate_path
+    else
+      redirect_to api_v1_curate_path
+    end
+  end
+
   def update
   end
 
