@@ -86,9 +86,9 @@ class API::V1::EventsController < ApplicationController
   def curate 
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
     
-    @eventsToday = [@eventsToday.select{|e| e.approved == true}, @eventsToday.select{|e| e.approved == false}].flatten
-
     order_events
+    
+    @eventsToday = [@eventsToday.select{|e| e.approved == true}, @eventsToday.select{|e| e.approved == false}].flatten
 
     @event =  Event.new()
 
