@@ -35,7 +35,7 @@
       <td><%= f.input :price, label: false %></td>
       <td><%= f.input :latitude, label: false %></td>
       <td><%= f.input :longitude, label: false %></td>
-      <td><a href="#{event.url}"> <%= event.url %></a><%= f.input :url, label: false %></td>
+      <td><a href="<%= event.url %>"> <%= event.url %></a><%= f.input :url, label: false %></td>
       <td><%= f.input :dayOn, label: false %></td>
       <td><%= f.input :dayEnd, label: false %></td>
       <td> <%= f.button :submit, 'Edit Event' %> </td>
