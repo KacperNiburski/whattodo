@@ -9,7 +9,7 @@ json.events events do |event|
   json.location event.location
   json.price event.price
   if event.dayOn == "No start time specified" && event.dayEnd == "No end time specified"
-    if event.dayOn.length < 10
+    if event.source == 'Self'
       json.dayOn (DateTime.parse(event.dayOn)+5.hours).to_i
       json.dayEnd (DateTime.parse(event.dayOn)+5.hours).to_i
     else

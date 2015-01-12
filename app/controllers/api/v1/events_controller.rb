@@ -127,7 +127,7 @@ class API::V1::EventsController < ApplicationController
   private
 
     def order_events
-      @eventsToday = [@eventsToday.select{|e| e.source == "Club Crawlers"}, @eventsToday.select{|e| e.source == 'Just Shows'}, @eventsToday.select{|e| e.source == 'Nowmagazine'}, @eventsToday.select{|e| e.source == 'Blog.to'}, @eventsToday.select{|e| e.source == 'City Hall'}, @eventsToday.select{|e| e.source == 'Eventbrite'}, @eventsToday.select{|e| e.source == 'Meetup'}].flatten
+      @eventsToday = [@eventsToday.select{|e| e.source == "Self"}, @eventsToday.select{|e| e.source == "Club Crawlers"}, @eventsToday.select{|e| e.source == 'Just Shows'}, @eventsToday.select{|e| e.source == 'Nowmagazine'}, @eventsToday.select{|e| e.source == 'Blog.to'}, @eventsToday.select{|e| e.source == 'City Hall'}, @eventsToday.select{|e| e.source == 'Eventbrite'}, @eventsToday.select{|e| e.source == 'Meetup'}].flatten
     end
 
     def event_params
