@@ -9,6 +9,9 @@
     <th>Image</th>
     <th>Approved</th>
     <th>
+      Description
+    </th>
+    <th>
       Location
     </th>
     <th>Price</th>
@@ -31,6 +34,7 @@
       </td>
       <td class="event-image"><%= f.input :image, label: false %><%= image_tag event.image %></td>
       <td> <%= event.approved %> </td>
+      <td><%= f.input :desc, label: false %></td>
       <td><%= f.input :location, label: false %></td>
       <td><%= f.input :price, label: false %></td>
       <td><%= f.input :latitude, label: false %></td>

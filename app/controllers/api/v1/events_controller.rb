@@ -87,7 +87,7 @@ class API::V1::EventsController < ApplicationController
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
     
     order_events
-    
+
     @eventsToday = [@eventsToday.select{|e| e.approved == true}, @eventsToday.select{|e| e.approved == false}].flatten
 
     @event =  Event.new()
@@ -131,7 +131,7 @@ class API::V1::EventsController < ApplicationController
     end
 
     def event_params
-      params.require(:event).permit(:name, :price, :location, :dayOn, :dayEnd, :latitude, :longitude, :url, :image, :categoryList)
+      params.require(:event).permit(:name, :price, :location, :dayOn, :dayEnd, :desc, :latitude, :longitude, :url, :image, :categoryList)
     end
 
     def filter_events(default = false)
