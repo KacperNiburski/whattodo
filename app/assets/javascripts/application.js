@@ -21,6 +21,10 @@ $(document).ready(function() {
     $('input').removeAttr('checked')
   })
 
+  $('.click-create').click(function() {
+    $('.form-new-event').toggle()
+  })
+
   $('#approve-all').click(function() {
     var allData = [],
         url;

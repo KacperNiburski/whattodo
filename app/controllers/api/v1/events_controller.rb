@@ -1,9 +1,10 @@
 class API::V1::EventsController < ApplicationController
+  protect_from_forgery with: :null_session
   helper_method :getMatchingEvents
   helper_method :getMatchingDayEvents
   helper_method :uniqueEvents
 
-  before_filter :restrict_access, except: [:create_token, :approve, :curate]
+  before_filter :restrict_access, except: [:create_token, :approve, :curate, :create, :new, :edit, :update]
 
   respond_to :json, except: :curate
 
@@ -27,6 +28,27 @@ class API::V1::EventsController < ApplicationController
     respond_with @eventsToday
   end
 
+  def create
+    @event = Event.create(event_params)
+    @event.uuid = SecureRandom.uuid
+    @event.source = "Self"
+    @event.categoryList = ['Party']
+    if @event.save
+      redirect_to api_v1_curate_path
+    else
+      redirect_to api_v1_curate_path
+    end
+  end
+
+  def update
+    @event = Event.find(params[:id])
+    if @event.update_attributes(event_params)
+      redirect_to api_v1_curate_path
+    else
+      redirect_to api_v1_curate_path
+    end
+  end
+
   def approve
     @events = params[:events].map{|e| Event.find(e) }
     @events.each do |e| 
@@ -39,7 +61,6 @@ class API::V1::EventsController < ApplicationController
 
       if e.approved == true
         Event.geocodeEvent(e)
-        sleep(1)
       end
     end
 
@@ -65,7 +86,11 @@ class API::V1::EventsController < ApplicationController
   def curate 
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
     
+    order_events
+
     @eventsToday = [@eventsToday.select{|e| e.approved == true}, @eventsToday.select{|e| e.approved == false}].flatten
+
+    @event =  Event.new()
 
     filter_events(true)
 
@@ -100,6 +125,14 @@ class API::V1::EventsController < ApplicationController
   end
 
   private
+
+    def order_events
+      @eventsToday = [@eventsToday.select{|e| e.source == "Self"}, @eventsToday.select{|e| e.source == "Club Crawlers"}, @eventsToday.select{|e| e.source == 'Just Shows'}, @eventsToday.select{|e| e.source == 'Nowmagazine'}, @eventsToday.select{|e| e.source == 'Blog.to'}, @eventsToday.select{|e| e.source == 'City Hall'}, @eventsToday.select{|e| e.source == 'Eventbrite'}, @eventsToday.select{|e| e.source == 'Meetup'}].flatten
+    end
+
+    def event_params
+      params.require(:event).permit(:name, :price, :location, :dayOn, :dayEnd, :desc, :latitude, :longitude, :url, :image, :categoryList)
+    end
 
     def filter_events(default = false)
       @eventsToday = @eventsToday.select{|event| event.categoryList.include?(params[:cat])} if params[:cat]

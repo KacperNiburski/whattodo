@@ -2,8 +2,29 @@
 <button id="uncheck">Uncheck all</button> <br>
 <button id="approve-all">Toggle Approving</button> <br>
 
+<h1> Refresh the page after any change for now. Just in case </h1>
+
 <div class="target"></div>
 
+<button class='click-create'>Create Event </button>
+<div class="form-new-event">
+  <%= simple_form_for @event, :url => api_v1_events_path, :method => :post do |f| %>
+    <span><%= f.input :name, input_html: {value: "Toronto's best event"} %> </span>
+    <span><%= f.input :desc, input_html: {value: "Write to your heart's content"} %> </span>
+    <span><%= f.input :approved, input_html: {value: 'false or true'} %> </span>
+    <span><%= f.input :location, input_html: {value: '20 Duncan Street, Toronto, Ontario'} %></span>
+    <span><%= f.input :price, input_html: {value: '20.00'} %></span>
+    <span><%= f.input :latitude, input_html: {value: '43.0'} %></span>
+    <span><%= f.input :longitude, input_html: {value: '-79.0'} %></span>
+    <span><%= f.input :url, input_html: {value: 'http://www.google.com'} %></span>
+    <span><%= f.input :image, input_html: {value: 'http://i.imgur.com/ixz8pZT.png?1'} %></span>
+    <span><%= f.input :dayOn, input_html: {value: 'Jan 11 2015 9:00am' } %></span>
+    <span><%= f.input :dayEnd, input_html: {value: 'Jan 11 2015 5:00pm'} %></span>
+    <span> <%= f.button :submit, 'Save Event' %> </span>
+  <% end %>
+</div>
+
 <div class="all-output">
+  <h3> Edit/Approve Events </h3>
   <%= render 'allEvents', locals: {eventsToday: @eventsToday} %>
 </div>

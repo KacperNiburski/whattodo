@@ -63,14 +63,14 @@ class Event < ActiveRecord::Base
   end
 
   def self.getdata
-  	 return [self.justshows,
-             self.eventbrite,
-             self.eventful,
-             self.meetup,
-             self.blogto,
-             self.cityhall,
-             self.torontocom
-  	].flatten
+    return [self.justshows,
+            self.eventbrite,
+            self.eventful,
+            self.meetup,
+            self.blogto,
+            self.cityhall,
+            self.torontocom
+           ].flatten
   end
 
   def self.getdata_two
@@ -173,7 +173,7 @@ class Event < ActiveRecord::Base
       end
 
       #http://www.mapquestapi.com/geocoding/v1/address?key=Fmjtd|luurn1u8l9%2Cbw%3Do5-9wyx0a&callback=renderOptions&inFormat=json&outFormat=json&location=20,Duncan,Street,Toronto,Canada
-      if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || Event.last.latitude == e.latitude || e.latitude == nil
+      if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 1.5 ) || Event.last.latitude == e.latitude || Event.last.latitude == e.latitude || e.latitude == nil
         # http://dev.virtualearth.net/REST/v1/Locations?CountryRegion=CA&adminDistrict=ON&locality=Toronto&addressLine=20%Duncan%Street&key=
         streetmapsString = URI.encode('http://www.mapquestapi.com/geocoding/v1/address?key=Fmjtd|luurn1u8l9%2Cbw%3Do5-9wyx0a&outFormat=json&location=' + e.location)
 
@@ -191,7 +191,7 @@ class Event < ActiveRecord::Base
       end
 
       # check if no events, if so then geocode. of if previous geocode gave wonky results or if similair to last event, to get variation. or if currently nil
-      if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || Event.last.latitude == e.latitude || e.latitude == nil
+      if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 1.5 ) || Event.last.latitude == e.latitude || Event.last.latitude == e.latitude || e.latitude == nil
         # http://dev.virtualearth.net/REST/v1/Locations?CountryRegion=CA&adminDistrict=ON&locality=Toronto&addressLine=20%Duncan%Street&key=
         locationSplit = e.location.split(',')[0]
         mapsUrl = "http://dev.virtualearth.net/REST/v1/Locations?CountryRegion=CA&adminDistrict=ON&locality=Toronto&addressLine=" + locationSplit + "&key=" + Figaro.env.maps_key
@@ -208,7 +208,7 @@ class Event < ActiveRecord::Base
 
       end
 
-      if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || e.latitude == nil
+      if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 1.5 ) || Event.last.latitude == e.latitude || e.latitude == nil
         here_key = Figaro.env.here_key
         here_secret = Figaro.env.here_secret
         string = "http://geocoder.cit.api.here.com/6.2/geocode.json?app_id=" + here_key + "&app_code=" + here_secret +"&gen=8&searchtext=" + e.location.gsub(' ', '+').gsub(',', '')          
@@ -225,7 +225,7 @@ class Event < ActiveRecord::Base
         end
       end
 
-      if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || e.latitude == nil
+      if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 1.5 ) || Event.last.latitude == e.latitude || e.latitude == nil
         string = "http://api.tiles.mapbox.com/v4/geocode/mapbox.places/"+e.location.gsub('-','').gsub(',','').gsub('(','').gsub(')','').gsub(' ', '+')+".json?access_token=pk.eyJ1IjoicmFrc29uaWJzIiwiYSI6IjZ0TFFlUEUifQ._wLBBR-FcaQuIK-tnfU7-w"          
         begin
           coords = JSON.parse((open(string)).read)
@@ -237,7 +237,7 @@ class Event < ActiveRecord::Base
         end
       end
       
-      if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 3 ) || Event.last.latitude == e.latitude || e.latitude == nil
+      if Event.last == nil || !( e.latitude.to_i - 43 >= 0 && e.latitude.to_i - 43 <= 1.5 ) || Event.last.latitude == e.latitude || e.latitude == nil
         string = "https://api.geocod.io/v1/geocode?q=" + e.location.gsub('-','').gsub(',','').gsub('(','').gsub(')','').gsub(' ', '+') + "&api_key=cf88885cb459801b5a1b52aac3c89531b584934"          
         begin
           coords = JSON.parse((open(string)).read)
@@ -488,7 +488,16 @@ class Event < ActiveRecord::Base
         name = event.css('.event-name').text()
         location = event.css('.event-address').text()
         location = location== "" || location == nil ? 'Toronto, Canada' : location + ', Toronto, Canada'
-        dayTime = todaystr + " " + event.css('.info-eventtime').text()
+        dayTime = event.css('.info-eventtime').text().split(/\s-\s/)
+
+        if dayTime.length >= 2 
+          dayEnd = DateTime.parse(todaystr+ ' '+dayTime[1])
+          dayTime = DateTime.parse(todaystr+ ' '+dayTime[0])
+        else
+          dayEnd = DateTime.parse(todaystr+ ' '+dayTime[0]) + 3.hours
+          dayTime = DateTime.parse(todaystr+ ' '+dayTime[0])
+        end
+    
         descIncomplete = event.css('.event-summary').text()
         categoryList = Event.findCats(descIncomplete)
         categoryList = ["Misc"] if categoryList == nil || categoryList == ""
@@ -504,7 +513,7 @@ class Event < ActiveRecord::Base
           location: location, 
           price: 'Check listing url!',
           dayOn: dayTime,
-          dayEnd: "No end time specified",
+          dayEnd: dayEnd,
           desc: descIncomplete,
           categoryList: categoryList,
           source: "Blog.to",
