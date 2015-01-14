@@ -21,6 +21,40 @@ $(document).ready(function() {
     $('.form-new-event').toggle()
   })
 
+  $('.edited').click(function() {
+    $(this).addClass('change-please')
+  })
+
+  $('#edit-all').click(function() {
+    var eventIds = {}
+    var needChange = $('.edited.change-please')
+    $.each(needChange, function(index, eventId) {
+      var eventVals = {}
+      $.each($(eventId).children('td'), function(index, eventTds) {
+        if ( index !== 0 && index !== -1 ) {
+          if index === 3 {
+            var textVal = $(eventTds).text()
+          } else if ( index === 4 ) {
+            var textVal = $(eventTds).find('textarea').val()
+          } else {
+            var textVal = $(eventTds).find('input').val()
+          }
+
+          
+
+        }
+
+      })
+
+      var eventNum = $(eventId).attr('class').split('')[1]
+      eventIds[eventNum]
+    })
+
+    var events = { events: eventIds }
+
+
+  })
+
   $('#approve-all').click(function() {
     var allData = [],
         url;

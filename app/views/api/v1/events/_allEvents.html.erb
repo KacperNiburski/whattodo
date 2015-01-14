@@ -24,25 +24,25 @@
   </tr>
   <div id="json-events">
     <% @eventsToday.each do |event| %>
-    <tr>
+    <tr class='edited <%= event.id %>'>
       <td>
         <%= check_box_tag(:event, "#{event.id}") %>
       </td>
     <%= simple_form_for event, url: api_v1_event_path(event), method: :put, remote: true do |f|%>
-      <td>
+      <td class="event-name">
         <%= f.input :name, label: false, class: 'check-box' %>
       </td>
       <td class="event-image"><%= f.input :image, label: false %><%= image_tag event.image %></td>
-      <td> <%= event.approved %> </td>
-      <td><%= f.input :desc, label: false %></td>
-      <td><%= f.input :location, label: false %></td>
-      <td><%= f.input :price, label: false %></td>
-      <td><%= f.input :latitude, label: false %></td>
-      <td><%= f.input :longitude, label: false %></td>
-      <td><a href="<%= event.url %>"> <%= event.url %></a><%= f.input :url, label: false %></td>
-      <td><%= f.input :dayOn, label: false %></td>
-      <td><%= f.input :dayEnd, label: false %></td>
-      <td> <%= f.button :submit, 'Edit Event' %> </td>
+      <td class="event-approved"> <%= event.approved %> </td>
+      <td class="event-desc"><%= f.input :desc, label: false %></td>
+      <td class="event-location"><%= f.input :location, label: false %></td>
+      <td class="event-price"><%= f.input :price, label: false %></td>
+      <td class="event-latitude"><%= f.input :latitude, label: false %></td>
+      <td class="event-longitude"><%= f.input :longitude, label: false %></td>
+      <td class="event-url"><a href="<%= event.url %>"> <%= event.url %></a><%= f.input :url, label: false %></td>
+      <td class="event-dayOn"><%= f.input :dayOn, label: false %></td>
+      <td class="event-dayEnd"><%= f.input :dayEnd, label: false %></td>
+      <td class="event-submit"> <%= f.button :submit, 'Edit Event' %> </td>
     <% end %>
     </tr>
     <% end %>
