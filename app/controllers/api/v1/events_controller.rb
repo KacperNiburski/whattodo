@@ -4,7 +4,7 @@ class API::V1::EventsController < ApplicationController
   helper_method :getMatchingDayEvents
   helper_method :uniqueEvents
 
-  before_filter :restrict_access, except: [:create_token, :approve, :curate, :create, :new, :edit, :update]
+  before_filter :restrict_access, except: [:create_token, :approve, :curate, :create, :new, :edit, :update, :mass_edit]
 
   respond_to :json, except: :curate
 
@@ -124,6 +124,24 @@ class API::V1::EventsController < ApplicationController
     respond_with @eventsToday
   end
 
+  def mass_edit
+    @events = params[:events][:events].keys.map{|e| Event.find(e)}
+
+    @events.each_with_index do |e| 
+      e.update_attributes(params[:events][:events][e.id.to_s].permit(:name, :price, :location, :dayOn, :dayEnd, :desc, :latitude, :longitude, :url, :image, :categoryList, :approved))
+    end
+
+    @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
+
+    @eventsToday = [@eventsToday.select{|e| e.approved == true}, @eventsToday.select{|e| e.approved == false}].flatten
+
+    filter_events(true)
+    
+    respond_to do |format|
+      format.json { render 'approve' }
+    end
+  end
+
   private
 
     def order_events
@@ -131,7 +149,7 @@ class API::V1::EventsController < ApplicationController
     end
 
     def event_params
-      params.require(:event).permit(:name, :price, :location, :dayOn, :dayEnd, :desc, :latitude, :longitude, :url, :image, :categoryList)
+      params.require(:event).permit(:name, :price, :location, :dayOn, :dayEnd, :desc, :latitude, :longitude, :url, :image, :categoryList, :approved)
     end
 
     def filter_events(default = false)
