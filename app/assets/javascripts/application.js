@@ -30,27 +30,31 @@ $(document).ready(function() {
     var needChange = $('.edited.change-please')
     $.each(needChange, function(index, eventId) {
       var eventVals = {}
-      $.each($(eventId).children('td'), function(index, eventTds) {
-        if ( index !== 0 && index !== -1 ) {
-          if index === 3 {
-            var textVal = $(eventTds).text()
+      var allTds = $(eventId).children('td') 
+      $.each(allTds, function(index, eventTds) {
+        if ( index !== 0 && index !== (allTds.length-1) ) {
+          if ( index === 3 ) {
+            var textVal = $(eventTds).text().trim()
           } else if ( index === 4 ) {
             var textVal = $(eventTds).find('textarea').val()
           } else {
             var textVal = $(eventTds).find('input').val()
           }
 
-          
+          var attribute = $(eventTds).attr('class').split('-')[1]
+
+          eventVals[attribute] = textVal
 
         }
 
-      })
+        if ( index === (allTds.length-1) ) {
+          var eventNum = $($(allTds).children()[0]).val()
+          eventIds[eventNum] = eventVals
+        }
 
-      var eventNum = $(eventId).attr('class').split('')[1]
-      eventIds[eventNum]
+      })
     })
 
-    var events = { events: eventIds }
 
 
   })
@@ -79,6 +83,7 @@ $(document).ready(function() {
         spring_constant: 0.2,
         spring_deaccelaration: 0.95,
       });
+
       $.ajax({
         url: url,
         type: "POST",
