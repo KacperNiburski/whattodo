@@ -20,6 +20,7 @@ Whattodo::Application.routes.draw do
       get '/curate' => 'events#curate', defaults: {format: 'html'}
       post '/approve' => 'events#approve', as: :approve
       get '/approved' => 'events#approved'
+      post '/mass_edit' => 'events#mass_edit'
     end
   end
 
