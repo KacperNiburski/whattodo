@@ -24,7 +24,7 @@
   </tr>
   <div id="json-events">
     <% @eventsToday.each do |event| %>
-    <tr class='edited <%= event.id %>'>
+    <tr class='edited <%= event.id %> <%= event.edited ? "highlighted" : "unhighlighted" %>'>
       <td>
         <%= check_box_tag(:event, "#{event.id}") %>
       </td>

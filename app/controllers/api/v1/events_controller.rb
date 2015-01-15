@@ -129,6 +129,8 @@ class API::V1::EventsController < ApplicationController
 
     @events.each_with_index do |e| 
       e.update_attributes(params[:events][:events][e.id.to_s].permit(:name, :price, :location, :dayOn, :dayEnd, :desc, :latitude, :longitude, :url, :image, :categoryList, :approved))
+      e.edited = true
+      e.save
     end
 
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))

@@ -28,6 +28,7 @@ $(document).ready(function() {
   $('#edit-all').click(function() {
     var eventIds = {}
     var needChange = $('.edited.change-please')
+
     $.each(needChange, function(index, eventId) {
       var eventVals = {}
       var allTds = $(eventId).children('td') 
@@ -54,6 +55,7 @@ $(document).ready(function() {
 
       })
     })
+
     if ( eventIds === {} ) {
        $('.target').text('Pick some events to edit noob!')
     } else {
