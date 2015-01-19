@@ -78,7 +78,7 @@ class API::V1::EventsController < ApplicationController
   def approved
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1)).select{|e| e.approved == true}
 
-    filter_events
+    # filter_events
 
     respond_with @eventsToday
   end
@@ -92,7 +92,7 @@ class API::V1::EventsController < ApplicationController
 
     @event =  Event.new()
 
-    filter_events(true)
+    # filter_events(true)
 
     respond_to do |format|
       format.html{}
@@ -147,7 +147,7 @@ class API::V1::EventsController < ApplicationController
   private
 
     def order_events
-      @eventsToday = [@eventsToday.select{|e| e.source == "Self"}, @eventsToday.select{|e| e.source == "Club Crawlers"}, @eventsToday.select{|e| e.source == 'Just Shows'}, @eventsToday.select{|e| e.source == 'Nowmagazine'}, @eventsToday.select{|e| e.source == 'Blog.to'}, @eventsToday.select{|e| e.source == 'City Hall'}, @eventsToday.select{|e| e.source == 'Eventbrite'}, @eventsToday.select{|e| e.source == 'Meetup'}].flatten
+      @eventsToday = [@eventsToday.select{|e| e.source == "Self"}, @eventsToday.select{|e| e.source == "Club Crawlers"},  @eventsToday.select{|e| e.source == 'Just Shows'}, @eventsToday.select{|e| e.source == 'Blog.to'}, @eventsToday.select{|e| e.source == 'Nowmagazine'}, @eventsToday.select{|e| e.source == 'Meetup'}].flatten
     end
 
     def event_params

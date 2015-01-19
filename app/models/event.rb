@@ -65,11 +65,9 @@ class Event < ActiveRecord::Base
   def self.getdata
     return [self.justshows,
             self.eventbrite,
-            self.eventful,
             self.meetup,
             self.blogto,
-            self.cityhall,
-            self.torontocom
+            self.cityhall
            ].flatten
   end
 
@@ -470,6 +468,8 @@ class Event < ActiveRecord::Base
 
   def self.blogto
     puts 'Running blogto'
+    # stop at first period.
+    #build venue lookup with address (so not like velvet nightblucl with lat long lookup)
     # http://www.blogto.com/events/?date=2014-11-11&status=started-today
     today = Date.today
     todaystr = today.strftime("%Y-%m-%d")
