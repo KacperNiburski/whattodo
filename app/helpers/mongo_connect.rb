@@ -5,7 +5,7 @@ require 'json'
  
 def get_connection
   return @db_connection if @db_connection
-  db = URI.parse(ENV['MONGOHQ_URL'])
+  db = URI.parse('mongodb://10.8.0.1:27017/map')
   db_name = db.path.gsub(/^\//, '')
   @db_connection = Mongo::Connection.new(db.host, db.port).db(db_name)
   @db_connection.authenticate(db.user, db.password) unless (db.user.nil? || db.password.nil?)
