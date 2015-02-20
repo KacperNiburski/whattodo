@@ -64,10 +64,8 @@ class Event < ActiveRecord::Base
 
   def self.getdata
     return [self.justshows,
-            self.eventbrite,
             self.meetup,
-            self.blogto,
-            self.cityhall
+            self.blogto
            ].flatten
   end
 
