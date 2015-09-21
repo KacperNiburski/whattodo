@@ -4,7 +4,7 @@ class API::V1::EventsController < ApplicationController
   helper_method :getMatchingDayEvents
   helper_method :uniqueEvents
 
-  before_filter :restrict_access, except: [:create_token, :approve, :curate, :create, :new, :edit, :update]
+  before_filter :restrict_access, except: [:create_token, :approve, :curate, :create, :new, :edit, :update, :mass_edit]
 
   respond_to :json, except: :curate
 
@@ -78,7 +78,7 @@ class API::V1::EventsController < ApplicationController
   def approved
     @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1)).select{|e| e.approved == true}
 
-    filter_events
+    # filter_events
 
     respond_with @eventsToday
   end
@@ -92,7 +92,7 @@ class API::V1::EventsController < ApplicationController
 
     @event =  Event.new()
 
-    filter_events(true)
+    # filter_events(true)
 
     respond_to do |format|
       format.html{}
@@ -124,14 +124,34 @@ class API::V1::EventsController < ApplicationController
     respond_with @eventsToday
   end
 
+  def mass_edit
+    @events = params[:events][:events].keys.map{|e| Event.find(e)}
+
+    @events.each_with_index do |e| 
+      e.update_attributes(params[:events][:events][e.id.to_s].permit(:name, :price, :location, :dayOn, :dayEnd, :desc, :latitude, :longitude, :url, :image, :categoryList, :approved))
+      e.edited = true
+      e.save
+    end
+
+    @eventsToday = uniqueEvents(getMatchingDayEvents + getMatchingDayEvents(Date.today + 1))
+
+    @eventsToday = [@eventsToday.select{|e| e.approved == true}, @eventsToday.select{|e| e.approved == false}].flatten
+
+    filter_events(true)
+    
+    respond_to do |format|
+      format.json { render 'approve' }
+    end
+  end
+
   private
 
     def order_events
-      @eventsToday = [@eventsToday.select{|e| e.source == "Self"}, @eventsToday.select{|e| e.source == "Club Crawlers"}, @eventsToday.select{|e| e.source == 'Just Shows'}, @eventsToday.select{|e| e.source == 'Nowmagazine'}, @eventsToday.select{|e| e.source == 'Blog.to'}, @eventsToday.select{|e| e.source == 'City Hall'}, @eventsToday.select{|e| e.source == 'Eventbrite'}, @eventsToday.select{|e| e.source == 'Meetup'}].flatten
+      @eventsToday = [@eventsToday.select{|e| e.source == "Self"}, @eventsToday.select{|e| e.source == "Club Crawlers"},  @eventsToday.select{|e| e.source == 'Just Shows'}, @eventsToday.select{|e| e.source == 'Blog.to'}, @eventsToday.select{|e| e.source == 'Nowmagazine'}, @eventsToday.select{|e| e.source == 'Meetup'}].flatten
     end
 
     def event_params
-      params.require(:event).permit(:name, :price, :location, :dayOn, :dayEnd, :desc, :latitude, :longitude, :url, :image, :categoryList)
+      params.require(:event).permit(:name, :price, :location, :dayOn, :dayEnd, :desc, :latitude, :longitude, :url, :image, :categoryList, :approved)
     end
 
     def filter_events(default = false)

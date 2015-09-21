@@ -35,6 +35,9 @@ GEM
     bourbon (3.2.3)
       sass (~> 3.2)
       thor
+    bson (1.11.1)
+    bson_ext (1.11.1)
+      bson (~> 1.11.1)
     builder (3.1.4)
     capistrano (3.1.0)
       i18n
@@ -132,6 +135,13 @@ GEM
     minitest (4.7.5)
     momentjs-rails (2.8.3)
       railties (>= 3.1)
+    mongo (1.11.1)
+      bson (= 1.11.1)
+    mongo_mapper (0.13.1)
+      activemodel (>= 3.0.0)
+      activesupport (>= 3.0)
+      mongo (~> 1.8)
+      plucky (~> 0.6.5)
     multi_json (1.5.1)
     multipart-post (1.2.0)
     net-http-digest_auth (1.4)
@@ -160,6 +170,8 @@ GEM
       omniauth (~> 1.0)
     os (0.9.6)
     pg (0.17.0)
+    plucky (0.6.6)
+      mongo (~> 1.5)
     polyglot (0.3.3)
     pry (0.10.1)
       coderay (~> 1.1.0)
@@ -296,6 +308,7 @@ PLATFORMS
 DEPENDENCIES
   better_errors
   bourbon
+  bson_ext
   capistrano (~> 3.1.0)
   capistrano-bundler (~> 1.1.2)
   capistrano-rails (~> 1.1.1)
@@ -317,6 +330,7 @@ DEPENDENCIES
   koala (~> 1.8.0rc1)
   mechanize
   momentjs-rails
+  mongo_mapper
   multi_json (= 1.5.1)
   newrelic_rpm
   nokogiri

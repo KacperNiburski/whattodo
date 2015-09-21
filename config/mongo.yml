@@ -1,0 +1,24 @@
+defaults: &defaults
+  host: 10.8.0.1
+  port: 27017
+  options:
+    w: 1
+    pool_size: 1
+    slave_ok: false
+    ssl: false
+
+development:
+  <<: *defaults
+  database: map
+
+test:
+  <<: *defaults
+  database: map
+  w: 0
+
+# set these environment variables on your prod server
+production:
+  <<: *defaults
+  database: map
+  username: <%= ENV['MONGO_USERNAME'] %>
+  password: <%= ENV['MONGO_PASSWORD'] %>

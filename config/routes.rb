@@ -7,6 +7,8 @@ Whattodo::Application.routes.draw do
   get "/auth/:provider/callback" => "sessions#create"
   get "/signout" => "sessions#destroy", :as => :signout
 
+  resources :haps
+
   # ttp://api.localhost.com/events
   namespace :api, defaults: {format: 'json'} do
     namespace :v1 do       
@@ -20,6 +22,7 @@ Whattodo::Application.routes.draw do
       get '/curate' => 'events#curate', defaults: {format: 'html'}
       post '/approve' => 'events#approve', as: :approve
       get '/approved' => 'events#approved'
+      post '/mass_edit' => 'events#mass_edit'
     end
   end
 

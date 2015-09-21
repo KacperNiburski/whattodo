@@ -12,19 +12,23 @@
  *= require_tree .
  */
 
- .event-image img {
-  width: 100px;
-  height: 100px;
- }
+.event-image img {
+width: 100px;
+height: 100px;
+}
 
- input.string {
-  width: 150px;
- }
+input.string {
+width: 150px;
+}
 
- div.input {
-  margin: 10px;
- }
+div.input {
+margin: 10px;
+}
 
- .form-new-event {
-  display: none;
+.form-new-event {
+display: none;
+}
+
+tr.highlighted {
+  background: lightblue;
  }

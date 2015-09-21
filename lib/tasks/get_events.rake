@@ -1,8 +1,8 @@
 namespace :get_events do
   desc 'Grabs event weekly'
   task :get_events => :environment do 
-    puts 'Destroying all Events'
-    Event.destroy_all
+    puts 'Destroying all unapproved Events'
+    Event.where(approved: false).destroy_all
 
     puts 'Creating Events'
     Event.createEvents
