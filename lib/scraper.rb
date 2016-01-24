@@ -3,11 +3,20 @@ include Capybara::DSL
 require 'headless'
 require 'os'
 
-Capybara.configure do |config|
-  config.run_server = false
-  config.default_driver = :selenium
-  config.app_host = 'https://www.nowmagazine.com' # change url
+Capybara::Webkit.configure do |config|
+  config.debug = false
+  config.block_unknown_urls
+  config.skip_image_loading
 end
+
+
+Capybara.configure do |config|
+  config.run_server = true
+  config.default_driver = :webkit
+  config.app_host = 'https://nowtoronto.com/search/event/all/'
+end
+
+Capybara.javascript_driver = :webkit
 
 module Scraper
   class NowMagazine
@@ -57,19 +66,23 @@ module Scraper
     end
 
     def self.get_events
-      if !OS.mac?
-        if Capybara.current_driver == :webkit
-          puts 'Starting headless'
-          @headless = Headless.new
-          @headless.start
-        end
+      puts "Starting nowmagazine"
+   
+      if Capybara.current_driver == :webkit
+        puts 'Starting headless'
+        @headless = Headless.new
+        @headless.start         
       end
-      @headless.start if !OS.mac? 
+      
+      puts "Working over here yo!"
+      
       eventAll = []
       page = visit('/')
       count = 0
+      puts "Vist page yo!"
       while count <= 100
-        page.all(:css, '.event_result').each do |element|
+        puts "Starting entering stuff"        
+        page.all(:css, '.event_result').each do |element|          
           name = element.find('.event_title').text()
           splitedDate = element.find('.event_date').text().split('-')
           dayOn = splitedDate[0]
@@ -80,7 +93,7 @@ module Scraper
           price = desc[/\$\d+/] || "Free"
           categories = element.find('.cats span').text().split(/[\/\s,]/).reject!(&:empty?)
           categories = ["Misc"] if categories == nil || categories == ""
-
+          puts "Starting one result named #{name}"
           eventAll.push({
               name: name,
               url: url,
@@ -93,8 +106,8 @@ module Scraper
               source: "Nowmagazine",
               image: "http://i.imgur.com/ixz8pZT.png?1"
             })
-        end
-        page = page.find('.next').click()
+        end        
+        page = page.find('.next').click() rescue ""
         count += 1
       end
       return eventAll
