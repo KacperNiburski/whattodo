@@ -55,11 +55,11 @@ class Event < ActiveRecord::Base
   def self.createEvents
     arrEvents = Event.getdata
     Event.callCreation(arrEvents)
+    # arrEvents = Event.getdata_two
+    # Event.callCreation(arrEvents)
   end
 
   def self.createEventsTwo
-     arrEvents = Event.getdata_two
-     Event.callCreation(arrEvents)
   end
 
   def self.getdata
@@ -70,8 +70,8 @@ class Event < ActiveRecord::Base
   end
 
   def self.getdata_two
-    return [self.nowmagazine,
-            self.elmcity
+    return [
+            self.nowmagazine
           ].flatten
   end
 
