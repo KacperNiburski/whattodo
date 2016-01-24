@@ -1,8 +1,6 @@
 //= require jquery
 //= require jquery-ui
 //= require jquery_ujs
-//= require underscore
-//= require spin
 //= require moment
 //= require snabbt
 //= require_tree .

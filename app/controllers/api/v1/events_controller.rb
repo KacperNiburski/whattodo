@@ -4,7 +4,7 @@ class API::V1::EventsController < ApplicationController
   helper_method :getMatchingDayEvents
   helper_method :uniqueEvents
 
-  before_filter :restrict_access, except: [:create_token, :approve, :curate, :create, :new, :edit, :update, :mass_edit]
+  # before_filter :restrict_access, except: [:create_token, :approve, :curate, :create, :new, :edit, :update, :mass_edit]
 
   respond_to :json, except: :curate
 

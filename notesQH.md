@@ -36,3 +36,6 @@ sudo -u postgres psql whattodo_development < the_backup.sql
 
 NowMagazine scrapper broken, elmcity no longer around
 
+
+
+-lsof -wni tcp:3000
