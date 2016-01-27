@@ -23,6 +23,7 @@ Whattodo::Application.routes.draw do
       post '/approve' => 'events#approve', as: :approve
       get '/approved' => 'events#approved'
       post '/mass_edit' => 'events#mass_edit'
+      post '/create_today' => 'events#create_today'
     end
   end
 

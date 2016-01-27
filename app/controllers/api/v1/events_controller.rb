@@ -40,6 +40,15 @@ class API::V1::EventsController < ApplicationController
     end
   end
 
+  def create_today
+    @event = Event.create(event_params)
+    @event.uuid = SecureRandom.uuid
+    @event.source = "Self"
+    @event.categoryList = ['Party']
+    @event.dayOn = Date.today()
+    @event.dayEnd = Date.today() + 1
+  end
+
   def update
     @event = Event.find(params[:id])
     if @event.update_attributes(event_params)
