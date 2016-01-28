@@ -50,7 +50,9 @@ class ApplicationController < ActionController::Base
   def getMatchingDayEvents(dateSent = Date.today, howMany = nil)
     eventsDay = []
     dateSent = Date.try(:parse,dateSent.to_s)
+
     Event.all.each do |event|
+      event.update_attributes({dayOn: "No start time specified"}) if event.dayOn == nil
       #  stupid conditions because nil endtime and inapproritate datetime
       if event.dayOn != "No start time specified" && event.dayEnd != "No end time specified" && !event.dayEnd.nil? && event.dayEnd.length > 9
         dateRange = (Date.parse(event.dayOn) .. Date.parse(event.dayEnd))
@@ -65,6 +67,7 @@ class ApplicationController < ActionController::Base
 
       return eventsDay if howMany != nil && eventsDay.count == howMany
     end
+
     eventsDay
   end
 

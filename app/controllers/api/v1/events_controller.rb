@@ -23,7 +23,7 @@ class API::V1::EventsController < ApplicationController
   def today
     @eventsToday = uniqueEvents(getMatchingDayEvents)
     
-    filter_events
+    # filter_events
 
     respond_with @eventsToday
   end
@@ -47,6 +47,11 @@ class API::V1::EventsController < ApplicationController
     @event.categoryList = ['Party']
     @event.dayOn = Date.today()
     @event.dayEnd = Date.today() + 1
+    if @event.save
+      render json: @event, status: 200
+    else
+      render json: {}, status: 500
+    end
   end
 
   def update
