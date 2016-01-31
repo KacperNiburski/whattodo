@@ -22,9 +22,6 @@ class API::V1::EventsController < ApplicationController
 
   def today
     @eventsToday = uniqueEvents(getMatchingDayEvents).reverse
-    
-    # filter_events
-
     respond_with @eventsToday
   end
 

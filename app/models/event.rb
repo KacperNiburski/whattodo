@@ -114,7 +114,7 @@ class Event < ActiveRecord::Base
 
         url = val.xpath("//entrydata[@name='EventURL']")[count].text == "" || val.xpath("//entrydata[@name='EventURL']")[count].text == nil ? "No url listed" : val.xpath("//entrydata[@name='EventURL']")[count].text
 
-        image = val.xpath("//entrydata[@name='Image']")[count].text == "" || val.xpath("//entrydata[@name='Image']")[count].text == nil ? "http://i.imgur.com/ixz8pZT.png?1" : val.xpath("//entrydata[@name='Image']")[count].text
+        image = val.xpath("//entrydata[@name='Image']")[count].text == "" || val.xpath("//entrydata[@name='Image']")[count].text == nil ? "http://imgur.com/KfucOsR.png" : val.xpath("//entrydata[@name='Image']")[count].text
 
         # day start and end used for ranges
         dayOn = dayOn + " " + timeStart
@@ -290,7 +290,7 @@ class Event < ActiveRecord::Base
         desc = event['event']["description"] || "No description"
         categoryList = Event.findCats(desc)
         categoryList = ["Misc"] if categoryList == nil || categoryList == ""
-        image = event['event']['logo'] != nil || event['event']['logo'] != "" ? event['event']['logo'] : "http://i.imgur.com/ixz8pZT.png?1"
+        image = event['event']['logo'] != nil || event['event']['logo'] != "" ? event['event']['logo'] : "http://imgur.com/KfucOsR.png"
         desc = ActionView::Base.full_sanitizer.sanitize(desc).gsub("\n",'').gsub("\t", "").gsub("\r","").strip
 
         eventAll.push({
@@ -340,7 +340,7 @@ class Event < ActiveRecord::Base
         categoryList = ["Misc"] if categoryList == nil || categoryList == ""
         longitude = event["longitude"]
         latitude = event['latitude']
-        image = "http://i.imgur.com/ixz8pZT.png?1"
+        image = "http://imgur.com/KfucOsR.png"
         desc = ActionView::Base.full_sanitizer.sanitize(desc).gsub("\n",'').gsub("\t", "").gsub("\r","").strip
 
         eventAll.push({
@@ -393,7 +393,7 @@ class Event < ActiveRecord::Base
         categoryList = ["Misc"] if categoryList == nil || categoryList == ""
         latitude = event["venue"] == nil ? nil : event['venue']['lat']
         longitude = event["venue"] == nil ? nil :event['venue']['lon']
-        image = "http://i.imgur.com/ixz8pZT.png?1"
+        image = "http://imgur.com/KfucOsR.png"
         desc = ActionView::Base.full_sanitizer.sanitize(desc).gsub("\n",'').gsub("\t", "").gsub("\r","").strip
 
         eventAll.push({
@@ -442,7 +442,7 @@ class Event < ActiveRecord::Base
         location = event.css("strong.location").text + ', Toronto, Canada'
         url = "http://justshows.com" + event.css('a').map{|a| a['href']}[0]
         description = "Music"
-        image = "http://i.imgur.com/ixz8pZT.png?1"
+        image = "http://imgur.com/KfucOsR.png"
 
         eventAll.push({
           name: name,
@@ -502,7 +502,7 @@ class Event < ActiveRecord::Base
         image = if !event.css('.poster').css('img').empty?
           event.css('.poster').css('img')[0]['src']
         else
-          "http://i.imgur.com/ixz8pZT.png?1"
+          "http://imgur.com/KfucOsR.png"
         end
 
         allEvents.push({
@@ -558,7 +558,7 @@ class Event < ActiveRecord::Base
         image = if !event.css('.img-holder').css('img').empty?
           event.css('.img-holder').css('img')[0]['src']
         else
-          "http://i.imgur.com/ixz8pZT.png?1"
+          "http://imgur.com/KfucOsR.png"
         end
 
         eventAll.push({
@@ -605,7 +605,7 @@ class Event < ActiveRecord::Base
         desc = ActionView::Base.full_sanitizer.sanitize(desc).gsub("\n",'').gsub("\t", "").gsub("\r","").strip
         categoryList = event['categories'].split(',')
         categoryList = ["Misc"] if categoryList == nil || categoryList == "" || categoryList == " "
-        image = "http://i.imgur.com/ixz8pZT.png?1"
+        image = "http://imgur.com/KfucOsR.png"
         latitude = event['lat']
         longitude = event['lon']
 

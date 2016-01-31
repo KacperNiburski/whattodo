@@ -104,7 +104,7 @@ module Scraper
               desc: desc,
               categoryList: categories,
               source: "Nowmagazine",
-              image: "http://i.imgur.com/ixz8pZT.png?1"
+              image: "http://imgur.com/KfucOsR.png"
             })
         end        
         page = page.find('.next').click() rescue ""
