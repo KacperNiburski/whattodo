@@ -16,6 +16,7 @@ class ApplicationController < ActionController::Base
 
     eventsCatDay = []
     eventsCat.each do |event|
+      begin
       if event.dayOn != "No start time specified" && event.dayEnd != "No end time specified" && !event.dayEnd.nil? && event.dayEnd.length > 9
         dateRange = (Date.parse(event.dayOn) .. Date.parse(event.dayEnd))
         if Date.parse(event.dayOn) == Date.parse(dateSent)
@@ -25,6 +26,8 @@ class ApplicationController < ActionController::Base
         end
       elsif event.dayOn != "No start time specified" && Date.parse(event.dayOn) == Date.parse(dateSent)
         eventsCatDay <<  event 
+      end
+      rescue
       end
     end 
 
@@ -52,6 +55,7 @@ class ApplicationController < ActionController::Base
     dateSent = Date.try(:parse,dateSent.to_s)
 
     Event.all.each do |event|
+      begin
       event.update_attributes({dayOn: "No start time specified"}) if event.dayOn == nil
       #  stupid conditions because nil endtime and inapproritate datetime
       if event.dayOn != "No start time specified" && event.dayEnd != "No end time specified" && !event.dayEnd.nil? && event.dayEnd.length > 9
@@ -63,6 +67,8 @@ class ApplicationController < ActionController::Base
         end
       elsif event.dayOn != "No start time specified" && Date.parse(event.dayOn) == dateSent
         eventsDay <<  event 
+      end
+      rescue
       end
 
       return eventsDay if howMany != nil && eventsDay.count == howMany

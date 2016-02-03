@@ -630,25 +630,26 @@ class Event < ActiveRecord::Base
     return eventAll
   end
 
-  def get_best_matches(events, price, distance, category)
+  def self.get_best_matches(events, price, distance, category)
     # score will be 1/3 each category for now.
     # price idontcare = 100000
     matchedEvents = {}
     events.each do |event|
       score = 0
-
-      score += 0.3 if event.price < price 
+      priceMatched = event.price 
+      priceMatched = 0 if event.price == "Check listing url!"
+      score += (rand(10..31)) if priceMatched.to_i <= price.to_i
       if distance == "Far"
-        score += 0.3 if event.distance_from(current_location) > 10
+        score += (rand(10..31)) if event.distance_from(current_location) > 10
       elsif distance == "Close"
-        score += 0.3 if event.distance_from(current_location) < 5
+        score += (rand(10..31)) if event.distance_from(current_location) < 5
       elsif distance == "Explore"
-        score += 0.3 if event.distance_from(current_location) > 5
+        score += (rand(10..31)) if event.distance_from(current_location) > 5
       else
-        score += 0.3
+        score += (rand(10..31))
       end
 
-      score += 0.3 if event.categoryList.include?(category)
+      score += (rand(10..31)) if event.categoryList.include?(category)
 
       matchedEvents[event.id] = [score, event.to_json]
     end

@@ -1,33 +1,29 @@
 json.meta do
   json.eventCount @eventsMatched.count
 end
-json.events @eventsMatched do |event, value|
-  json.score value[0]
-  json.ruby_id value[1].id
-  json.uuid value[1].uuid
-  json.name value[1].name
-  json.approved value[1].approved
-  json.location value[1].location
-  json.price value[1].price
-  if value[1].dayOn == "No start time specified" && value[1].dayEnd == "No end time specified"
-    if value[1].source == 'Self'
-      json.dayOn (DateTime.parse(value[1].dayOn)+5.hours).to_i
-      json.dayEnd (DateTime.parse(value[1].dayOn)+5.hours).to_i
-    else
-      json.dayOn (DateTime.parse(value[1].dayOn)+5.hours).to_i
-      json.dayEnd (DateTime.parse(value[1].dayEnd)+5.hours).to_i
-    end
+json.events @eventsMatched.each do |event, value|
+  json.score value[1][0]
+  jsonString = JSON.parse(value[1][1])
+  json.ruby_id jsonString['id']
+  json.uuid jsonString['uuid']
+  json.name jsonString['name']
+  json.approved jsonString['approved']
+  json.location jsonString['location']
+  json.price jsonString['price']
+  if jsonString['dayOn'] == "No start time specified" && jsonString['dayEnd'] == "No end time specified"
+    json.dayOn (DateTime.parse(jsonString['dayOn'])+5.hours).to_i
+    json.dayEnd (DateTime.parse(jsonString['dayEnd'])+5.hours).to_i
   else
-    json.dayOn (DateTime.parse(value[1].dayOn)+5.hours).to_i
-    json.dayEnd (DateTime.parse(value[1].dayEnd)+5.hours).to_i
+    json.dayOn (DateTime.parse(jsonString['dayOn'])+5.hours).to_i
+    json.dayEnd (DateTime.parse(jsonString['dayEnd'])+5.hours).to_i
   end
-  json.latitude value[1].latitude
-  json.longitude value[1].longitude
-  json.url value[1].url
-  json.image value[1].image
-  json.desc value[1].desc
-  json.categoryList value[1].categoryList
-  json.source value[1].source
-  json.created_at value[1].created_at.to_i
-  json.updated_at value[1].updated_at.to_i
+  json.latitude jsonString['latitude']
+  json.longitude jsonString['longitude']
+  json.url jsonString['url']
+  json.image jsonString['image']
+  json.desc jsonString['desc']
+  json.categoryList jsonString['categoryList']
+  json.source jsonString['source']
+  json.created_at jsonString['created_at.to_i']
+  json.updated_at jsonString['updated_at.to_i']
 end
