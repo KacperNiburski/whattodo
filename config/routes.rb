@@ -24,6 +24,7 @@ Whattodo::Application.routes.draw do
       get '/approved' => 'events#approved'
       post '/mass_edit' => 'events#mass_edit'
       post '/create_today' => 'events#create_today'
+      get "/get_rating/:money/:category/:location" => 'events#get_rating'
     end
   end
 

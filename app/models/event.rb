@@ -55,11 +55,8 @@ class Event < ActiveRecord::Base
   def self.createEvents
     arrEvents = Event.getdata
     Event.callCreation(arrEvents)
-    # arrEvents = Event.getdata_two
-    # Event.callCreation(arrEvents)
-  end
-
-  def self.createEventsTwo
+    arrEvents = Event.getdata_two
+    Event.callCreation(arrEvents)
   end
 
   def self.getdata
@@ -71,7 +68,11 @@ class Event < ActiveRecord::Base
 
   def self.getdata_two
     return [
-            self.nowmagazine
+            # self.cityhall,
+            # self.eventbrite,
+            self.eventful,
+            self.club_crawlers,
+            self.torontocom
           ].flatten
   end
 
@@ -96,7 +97,7 @@ class Event < ActiveRecord::Base
           price = price[/\s\$\d+/][/\d+/]
           price = price[/\d+/]
         else
-          price = price == "Free" || price == "Price not listed" ? price : price[/\d+/]
+          price = price == 0 || price == "Price not listed" ? price : price[/\d+/]
         end
 
         categoryList = val.xpath("//entrydata[@name='CategoryList']")[count].text
@@ -283,7 +284,7 @@ class Event < ActiveRecord::Base
         timeStart = event['event']["start_date"]
         timeEnd = event['event']["end_date"]
         price = event['event']["tickets"][0]["ticket"]["price"]
-        price = price == "0.00" || price == nil ? "Free" : price
+        price = price == "0.00" || price == nil ? 0 : price
         location = event['event']["venue"]["address"] + event['event']["venue"]["address_2"]
         location = location == "" || location == nil ? "No address listed" : location + ", Toronto, Canada"
         url = event['event']["url"]
@@ -384,7 +385,7 @@ class Event < ActiveRecord::Base
         name = name == nil || name == "" ? event["group"]["name"] : name
         time = Time.at(event["time"]/1000).to_datetime
         price = event["fee"] != nil ? event["fee"]["amount"] : 0
-        price = price == 0 || price == nil || price == "0" ? "Free" : price
+        price = price == 0 || price == nil || price == "0" ? 0 : price
         location = event["venue"] == nil ? "" : event["venue"]["address_1"]
         location = location == "" || location == nil ? "No address listed" : location + ", Toronto, Canada"
         url = event["event_url"]
@@ -436,8 +437,8 @@ class Event < ActiveRecord::Base
       pageEvents.each do |event|
         dayTimeStart = event.css("strong.day").text + " " + Time.parse(event.css("span.time").text).strftime("%I:%M %p")
         price = event.css("span.venue-meta").text[/\$\d+(\.\d+\s)?(-$\d+\.\d+)?[^All]+[\d+]/]
-        price = price != nil || price != "Free" ? price : 'Free'
-        price = 'Free' if price == nil
+        price = price != nil || price != 0 ? price : 0
+        price = 0 if price == nil
         name = event.css("strong.summary").text
         location = event.css("strong.location").text + ', Toronto, Canada'
         url = "http://justshows.com" + event.css('a').map{|a| a['href']}[0]
@@ -627,6 +628,33 @@ class Event < ActiveRecord::Base
     end
 
     return eventAll
+  end
+
+  def get_best_matches(events, price, distance, category)
+    # score will be 1/3 each category for now.
+    # price idontcare = 100000
+    matchedEvents = {}
+    events.each do |event|
+      score = 0
+
+      score += 0.3 if event.price < price 
+      if distance == "Far"
+        score += 0.3 if event.distance_from(current_location) > 10
+      elsif distance == "Close"
+        score += 0.3 if event.distance_from(current_location) < 5
+      elsif distance == "Explore"
+        score += 0.3 if event.distance_from(current_location) > 5
+      else
+        score += 0.3
+      end
+
+      score += 0.3 if event.categoryList.include?(category)
+
+      matchedEvents[event.id] = [score, event.to_json]
+    end
+
+    matchedEvents
+
   end
 
   def self.findCats(desc)

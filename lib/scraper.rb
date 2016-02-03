@@ -90,7 +90,7 @@ module Scraper
           url = element.find('h4.event_title a')[:href]
           location = element.all(:css, '.event_info a')[1].text() + ', Toronto, Canada'
           desc = element.find('.description').text()[0..-8]
-          price = desc[/\$\d+/] || "Free"
+          price = desc[/\$\d+/] || 0
           categories = element.find('.cats span').text().split(/[\/\s,]/).reject!(&:empty?)
           categories = ["Misc"] if categories == nil || categories == ""
           puts "Starting one result named #{name}"

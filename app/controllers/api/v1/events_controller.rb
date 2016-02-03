@@ -60,6 +60,18 @@ class API::V1::EventsController < ApplicationController
     end
   end
 
+  def get_rating
+    # 0, <10, <25, <50, <100, don't care
+    price = params[:money]
+    # close, far, explore, don't care
+    distance = params[:location]
+    # Music, Seasonal, Cultured, Learn, Investing (business), Sport, Geek, Outdoor, Good (ie: Feel good), Party, Watch (shows and stuff), religion, food 
+    category = params[:category]
+    @eventsToday = uniqueEvents(getMatchingDayEvents).reverse
+    @eventsMatched = Event.get_best_matches(@eventsToday, price, distance, category)
+
+  end
+
   def approve
     @events = params[:events].map{|e| Event.find(e) }
     @events.each do |e| 
