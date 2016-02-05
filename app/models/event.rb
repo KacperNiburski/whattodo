@@ -633,7 +633,7 @@ class Event < ActiveRecord::Base
   def self.get_best_matches(events, price, distance, category)
     # score will be 1/3 each category for now.
     # price idontcare = 100000
-    matchedEvents = {}
+    matchedEvents = []
     events.each do |event|
       score = 0
       priceMatched = event.price 
@@ -651,7 +651,7 @@ class Event < ActiveRecord::Base
 
       score += (rand(10..31)) if event.categoryList.include?(category)
 
-      matchedEvents[event.id] = [score, event.to_json]
+      matchedEvents << [score, event.to_json]
     end
 
     matchedEvents

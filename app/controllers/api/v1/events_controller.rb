@@ -69,7 +69,7 @@ class API::V1::EventsController < ApplicationController
     category = params[:category]
     @eventsToday = uniqueEvents(getMatchingDayEvents).reverse
     @eventsMatched = Event.get_best_matches(@eventsToday, price, distance, category)
-
+    @eventsMatched = @eventsMatched.sort_by{|e| e[0]}.reverse
   end
 
   def approve

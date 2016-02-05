@@ -1,9 +1,9 @@
 json.meta do
   json.eventCount @eventsMatched.count
 end
-json.events @eventsMatched.each do |event, value|
-  json.score value[1][0]
-  jsonString = JSON.parse(value[1][1])
+json.events @eventsMatched.each do |value|
+  json.score value[0]
+  jsonString = JSON.parse(value[1])
   json.ruby_id jsonString['id']
   json.uuid jsonString['uuid']
   json.name jsonString['name']
