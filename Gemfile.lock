@@ -28,6 +28,10 @@ GEM
     addressable (2.4.0)
     arel (4.0.2)
     attr_required (1.0.0)
+    babel-source (5.8.35)
+    babel-transpiler (0.7.0)
+      babel-source (>= 4.0, < 6)
+      execjs (~> 2.0)
     better_errors (2.0.0)
       coderay (>= 1.0.0)
       erubis (>= 2.6.6)
@@ -64,6 +68,7 @@ GEM
       ffi (~> 1.0, >= 1.0.11)
     chronic (0.10.2)
     coderay (1.1.0)
+    coffee-script-source (1.10.0)
     connection_pool (2.2.0)
     delayed_job (4.1.1)
       activesupport (>= 3.0, < 5.0)
@@ -201,6 +206,13 @@ GEM
     rake (10.4.2)
     rdoc (4.2.0)
       json (~> 1.4)
+    react-rails (1.6.0)
+      babel-transpiler (>= 0.7.0)
+      coffee-script-source (~> 1.8)
+      connection_pool
+      execjs
+      rails (>= 3.2)
+      tilt
     redis (3.2.0)
     redis-namespace (1.5.1)
       redis (~> 3.0, >= 3.0.4)
@@ -329,6 +341,7 @@ DEPENDENCIES
   rack
   rails (= 4.0.0)
   rails_12factor
+  react-rails (~> 1.6.0)
   rspec-rails
   sass-rails (~> 4.0.2)
   sdoc

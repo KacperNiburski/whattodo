@@ -85,3 +85,5 @@ group :production do
   gem 'unicorn'
   # gem 'hooves', require: "hooves/default"
 end
+
+gem 'react-rails', '~> 1.6.0'
