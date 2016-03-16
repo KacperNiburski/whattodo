@@ -4,7 +4,7 @@ const Home = React.createClass({
     return (
       <div>
         <Bar />
-        
+        <CardModule />
         Question 1
         Question 2
         Question 3
