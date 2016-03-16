@@ -5,6 +5,7 @@
 //= require snabbt
 //= require react
 //= require_tree .
+
 $(document).ready(function() {
   $('.button').click(function() {
     $.get("/api/v1/create_token", function(data) {

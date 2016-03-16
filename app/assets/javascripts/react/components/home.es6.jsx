@@ -1,14 +1,10 @@
-
-var Home =  React.createClass({
+const Home = React.createClass({
   
   render () {
     return (
       <div>
-        <AppBar
-          title="Title"
-          iconClassNameRight="muidocs-icon-navigation-expand-more"
-        />
-      
+        <Bar />
+        
         Question 1
         Question 2
         Question 3
@@ -23,3 +19,4 @@ var Home =  React.createClass({
     );
   }
 })
+

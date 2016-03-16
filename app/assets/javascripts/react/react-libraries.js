@@ -8,4 +8,6 @@ injectTapEventPlugin = require('react-tap-event-plugin'); injectTapEventPlugin()
 MyRawTheme = require('./theme');
 ThemeManager = require('material-ui/lib/styles/theme-manager');
 
-var AppBar = require('material-ui/lib/app-bar');
+Components = {};
+
+AppBar = require('material-ui/lib/app-bar');

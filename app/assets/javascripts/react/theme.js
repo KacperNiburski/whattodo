@@ -19,5 +19,3 @@ module.exports = {
     disabledColor: ColorManipulator.fade(Colors.darkBlack, 0.3)
   }
 };
-
-var AppBar = require('material-ui/lib/app-bar');

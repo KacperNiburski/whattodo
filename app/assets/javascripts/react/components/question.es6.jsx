@@ -1,5 +1,3 @@
-
-
 class Question extends React.Component {
   render () {
     return (
