@@ -27,3 +27,5 @@ categorylist.txt
 DayEvents.txt
 # Ignore application configuration
 /config/application.yml
+
+node_modules
