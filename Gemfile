@@ -87,3 +87,4 @@ group :production do
 end
 
 gem 'react-rails', '~> 1.6.0'
+gem 'browserify-rails'
