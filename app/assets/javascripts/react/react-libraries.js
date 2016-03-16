@@ -18,3 +18,7 @@ Card = mui.Card
 RaisedButton = mui.RaisedButton
 CardText = mui.CardText
 
+GridList = require('material-ui/lib/grid-list/grid-list');
+GridTile = require('material-ui/lib/grid-list/grid-tile');
+StarBorder = require('material-ui/lib/svg-icons/toggle/star-border');
+IconButton = require('material-ui/lib/icon-button');

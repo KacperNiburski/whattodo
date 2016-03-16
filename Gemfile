@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.0'
+gem 'rails'
 
 gem 'pg'
 
@@ -28,7 +28,7 @@ gem "omniauth-facebook"
 
 # Asset Handling
 gem 'bourbon' # Should replace w/ autoprefixer: https://github.com/ai/autoprefixer-rails
-gem 'sass-rails', '~> 4.0.2'
+gem 'sass-rails'
 gem 'uglifier', '>= 1.3.0'
 
 gem 'font-awesome-rails'
@@ -88,3 +88,6 @@ end
 
 gem 'react-rails', '~> 1.6.0'
 gem 'browserify-rails'
+
+gem 'sprockets'
+gem 'sprockets-es6'
