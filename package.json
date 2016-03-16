@@ -1,0 +1,34 @@
+{
+  "name": "whattodo",
+  "version": "1.0.0",
+  "description": "Grabs all Event Data in Toronto. Fork it to add sources or build on top of API layer.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raksonibs/whattodo.git"
+  },
+  "dependencies" : {
+    "react": "0.14.0",
+    "react-addons-create-fragment": "0.14.0",
+    "react-addons-pure-render-mixin": "0.14.0",
+    "react-addons-transition-group": "0.14.0",
+    "react-addons-update": "0.14.0",
+    "react-dom": "0.14.0",
+    "react-tap-event-plugin": "0.2.0",
+    "browserify": "~> 10.2.4",
+    "browserify-incremental": "^3.0.1",
+    "material-ui": "0.13.1"
+  },
+  "author": "Oskar Niburski <oskarniburski@gmail.com> (http://raksonibs.github.io)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/raksonibs/whattodo/issues"
+  },
+  "homepage": "https://github.com/raksonibs/whattodo#readme"
+}

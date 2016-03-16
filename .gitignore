@@ -28,4 +28,4 @@ DayEvents.txt
 # Ignore application configuration
 /config/application.yml
 
-node_modules
+/node_modules
