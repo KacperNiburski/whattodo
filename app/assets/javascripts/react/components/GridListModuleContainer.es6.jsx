@@ -118,15 +118,6 @@ let questionsSet = {
   }
 }
 
-var styles = {
-  root: {
-
-  },
-  gridList: {
-
-  }
-};
-
 const GridListModuleContainer = React.createClass({
   getInitialState: function() {
     return {
@@ -193,7 +184,7 @@ const GridListModuleContainer = React.createClass({
 
   render() {
     return (
-      <GridListModule questions={this.state.questions} increaseQuestionLevel={this.increaseQuestionLevel} questionLevel={this.state.questionLevel} />
+      <Button increaseQuestionLevel={this.increaseQuestionLevel} text={this.state.questionLevel.toString()} />
     )  
   }
 })

@@ -1,8 +1,19 @@
 class Button extends React.Component {
+  constructor() {
+    super()
+    this.state = {
+      text: this.props.text
+    }
+  }
+
+  questionLevelDummy() {
+    this.props.increaseQuestionLevel()
+  }
+
   render () {
     return (
       <div>
-        <div>Text: {this.props.text}</div>
+        <div onClick={this.questionLevelDummy.bind(this)}>Text: {this.state.text}</div>
       </div>
     );
   }
