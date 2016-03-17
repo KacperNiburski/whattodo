@@ -12,7 +12,7 @@ var styles = {
   }
 };
 
-var tilesData = [
+var questionsSet = [
   {
     img: 'images/grid-list/00-52-29-429_640.jpg',
     title: 'Breakfast',
@@ -55,22 +55,33 @@ var tilesData = [
   },
 ];
 
-const GridListModule = () => (
-  <div style={styles.root}>
-    <GridList
-      cellHeight={200}
-      style={styles.gridList}
-    >
-      {tilesData.map(tile => (
-        <GridTile
-          key={tile.img}
-          title={tile.title}
-          subtitle={<span>by <b>{tile.author}</b></span>}
-          actionIcon={<IconButton><StarBorder color="white"/></IconButton>}
+class GridListModule extends React.Component {
+  constructor() {
+    super()
+    this.state = {
+      questions: this.props.data || questionsSet
+    }
+  }
+
+  render() {
+    return (
+      <div style={styles.root}>
+        <GridList
+          cellHeight={200}
+          style={styles.gridList}
         >
-          <img src={tile.img} />
-        </GridTile>
-      ))}
-    </GridList>
-  </div>
-);
+          {this.state.questions.map(tile => (
+            <GridTile
+              key={tile.img}
+              title={tile.title}
+              subtitle={<span>by <b>{tile.author}</b></span>}
+              actionIcon={<IconButton><StarBorder color="white"/></IconButton>}
+            >
+              <img src={tile.img} />
+            </GridTile>
+          ))}
+        </GridList>
+      </div>
+    )  
+  }
+};
