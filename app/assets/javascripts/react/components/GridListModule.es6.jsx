@@ -12,70 +12,39 @@ var styles = {
   }
 };
 
-var questionsSet = [
-  {
-    img: 'images/grid-list/00-52-29-429_640.jpg',
-    title: 'Breakfast',
-    author: 'jill111',
-  },
-  {
-    img: 'images/grid-list/burger-827309_640.jpg',
-    title: 'Tasty burger',
-    author: 'pashminu',
-  },
-  {
-    img: 'images/grid-list/camera-813814_640.jpg',
-    title: 'Camera',
-    author: 'Danson67',
-  },
-  {
-    img: 'images/grid-list/morning-819362_640.jpg',
-    title: 'Morning',
-    author: 'fancycrave1',
-  },
-  {
-    img: 'images/grid-list/hats-829509_640.jpg',
-    title: 'Hats',
-    author: 'Hans',
-  },
-  {
-    img: 'images/grid-list/honey-823614_640.jpg',
-    title: 'Honey',
-    author: 'fancycravel',
-  },
-  {
-    img: 'images/grid-list/vegetables-790022_640.jpg',
-    title: 'Vegetables',
-    author: 'jill111',
-  },
-  {
-    img: 'images/grid-list/water-plant-821293_640.jpg',
-    title: 'Water plant',
-    author: 'BkrmadtyaKarki',
-  },
-];
-
-class GridListModule extends React.Component {
-  constructor() {
-    super()
-    this.state = {
-      questions: this.props.data || questionsSet
+const GridListModule = React.createClass({
+  getInitialState: function() {
+    return {
+      questions: this.props.data || questionsSet,
+      questionLevel: this.props.questionLevel || 1
     }
-  }
+  },
+
+  handleNextLevelClick: function(key) {
+    let answer = this.state.questions.filter({
+      return key === item.key
+    })
+
+    this.props.changeLevel(this.props.questionLevel, answer);
+    this.state.questionLevel = this.state.questionLevel + 1;
+    this.state.questions = this.props.getQuestions(questionLevel)
+  },
 
   render() {
     return (
       <div style={styles.root}>
+        <h1>{this.state.questionLevel}</h1>
         <GridList
           cellHeight={200}
           style={styles.gridList}
         >
           {this.state.questions.map(tile => (
             <GridTile
-              key={tile.img}
+              key={tile.key}
               title={tile.title}
               subtitle={<span>by <b>{tile.author}</b></span>}
               actionIcon={<IconButton><StarBorder color="white"/></IconButton>}
+              onClick={this.handleNextLevelClick(tile.key)}
             >
               <img src={tile.img} />
             </GridTile>
@@ -84,4 +53,4 @@ class GridListModule extends React.Component {
       </div>
     )  
   }
-};
+})
