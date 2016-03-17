@@ -127,11 +127,11 @@ var styles = {
   }
 };
 
-const GridListModule = React.createClass({
+const GridListModuleContainer = React.createClass({
   getInitialState: function() {
     return {
-      questionLevel: this.props.questionLevel,
-      questions: this.props.questions,
+      questionLevel: 1,
+      questions: questionsSet["1"]["data"],
       answer_1: '',
       answer_2: '',
       answer_3: '',
@@ -140,45 +140,60 @@ const GridListModule = React.createClass({
   },
 
   handleNextLevelClick: function(key) {
-    
+    let answer;
+
+    if (this.state.questions !== undefined ) {      
+      this.state.questions.filter(function(_question, _index){
+        if (_question.key == key) {
+          answer = _question
+        }
+      })
+
+      this.changeLevel(this.state.questionLevel, answer);    
+      this.state.questions = this.getQuestions(this.state.questionLevel)
+    }
   },
 
   getQuestions(questionLevel) {
     let questionString = questionLevel.toString();
+    this.state.questions = questionsSet[questionString]["data"]
   },
 
-  increaseQuestionLevelDummy() {    
-    this.props.increaseQuestionLevel();
+  increaseQuestionLevel() {
+    this.state.questionLevel += 1;
+    // setState({questionLevel: this.state.questionLevel + 1})
+    console.log(this.state.questionLevel);
   },
 
   getResult(answer_1, answer_2, answer_3) {
-    
+    let url = `/get_rating/${answer_1}/${answer_2}/${answer_3}`;
+    $.get(url, function(result, error) {
+      if (error) return;
+      this.state.result = result
+    });
   },
 
   changeLevel(questionLevel, answer) {
+    switch (questionLevel) {
+      case 1: 
+        this.state.answer_1 = answer;
+        break;
+      case 2:
+        this.state.answer_2 = answer;
+        break;
+      case 3:
+        this.state.answer_3 = answer;
+        this.getResult(answer_1, answer_2, answer_3);
+        break;
+
+    }
+
+    this.state.questionLevel = this.state.questionLevel + 1;
   },
 
   render() {
     return (
-      <div style={styles.root}>
-        <h1>{this.props.questionLevel}</h1>
-        <a onClick={this.increaseQuestionLevelDummy}>Increase level </a>
-        <GridList
-          cellHeight={200}
-          style={styles.gridList}
-        >
-          {this.state.questions.map(tile => (
-            <GridTile
-              key={tile.key}
-              title={tile.title}
-              subtitle={<span>by <b>{tile.author}</b></span>}
-              actionIcon={<IconButton onClick={this.handleNextLevelClick(tile.key)}><StarBorder color="white"/></IconButton>}              
-            >
-              <img src={tile.img} />
-            </GridTile>
-          ))}
-        </GridList>
-      </div>
+      <GridListModule questions={this.state.questions} increaseQuestionLevel={this.increaseQuestionLevel} questionLevel={this.state.questionLevel} />
     )  
   }
 })
