@@ -41,38 +41,38 @@ let questionsSet = {
   "2": {
     "data": [{
     img: 'https://pbs.twimg.com/profile_images/638751551457103872/KN-NzuRl.png',
-    title: 'Happy',
-    author: 'Q1',
+    title: 'Run',
+    author: 'Q2',
     key: 1
   },
   {
     img: 'https://pbs.twimg.com/profile_images/638751551457103872/KN-NzuRl.png',
-    title: 'Sad',
-    author: 'Q1',
+    title: 'Walk',
+    author: 'Q2',
     key: 2
   },
   {
     img: 'https://pbs.twimg.com/profile_images/638751551457103872/KN-NzuRl.png',
-    title: 'Mad',
-    author: 'Q1',
+    title: 'Swim',
+    author: 'Q2',
     key: 3
   },
   {
     img: 'https://pbs.twimg.com/profile_images/638751551457103872/KN-NzuRl.png',
-    title: 'Glad',
-    author: 'Q1',
+    title: 'Jump',
+    author: 'Q2',
     key: 4
   },
   {
     img: 'https://pbs.twimg.com/profile_images/638751551457103872/KN-NzuRl.png',
-    title: 'Run',
-    author: 'Q1',
+    title: 'Skip',
+    author: 'Q2',
     key: 5
   },
   {
     img: 'https://pbs.twimg.com/profile_images/638751551457103872/KN-NzuRl.png',
-    title: 'Jump',
-    author: 'Q1',
+    title: 'Straddle',
+    author: 'Q2',
     key: 6
   }
   ]
@@ -80,38 +80,38 @@ let questionsSet = {
   "3": {
     "data": [{
     img: 'https://pbs.twimg.com/profile_images/638751551457103872/KN-NzuRl.png',
-    title: 'Happy',
-    author: 'Q1',
+    title: '0',
+    author: 'Q3',
     key: 1
   },
   {
     img: 'https://pbs.twimg.com/profile_images/638751551457103872/KN-NzuRl.png',
-    title: 'Sad',
-    author: 'Q1',
+    title: '10',
+    author: 'Q3',
     key: 2
   },
   {
     img: 'https://pbs.twimg.com/profile_images/638751551457103872/KN-NzuRl.png',
-    title: 'Mad',
-    author: 'Q1',
+    title: '20',
+    author: 'Q3',
     key: 3
   },
   {
     img: 'https://pbs.twimg.com/profile_images/638751551457103872/KN-NzuRl.png',
-    title: 'Glad',
-    author: 'Q1',
+    title: '30',
+    author: 'Q3',
     key: 4
   },
   {
     img: 'https://pbs.twimg.com/profile_images/638751551457103872/KN-NzuRl.png',
-    title: 'Run',
-    author: 'Q1',
+    title: '80',
+    author: 'Q3',
     key: 5
   },
   {
     img: 'https://pbs.twimg.com/profile_images/638751551457103872/KN-NzuRl.png',
-    title: 'Jump',
-    author: 'Q1',
+    title: '200',
+    author: 'Q3',
     key: 6
   }
   ]
@@ -133,16 +133,11 @@ const GridListModuleContainer = React.createClass({
   handleNextLevelClick: function(key) {
     let answer;
 
-    if (this.state.questions !== undefined ) {      
-      this.state.questions.filter(function(_question, _index){
-        if (_question.key == key) {
-          answer = _question
-        }
-      })
+    this.changeLevel(this.state.questionLevel, answer);
+    this.state.questionLevel += 1;
+    this.state.questions = this.getQuestions(this.state.questionLevel)
 
-      this.changeLevel(this.state.questionLevel, answer);    
-      this.state.questions = this.getQuestions(this.state.questionLevel)
-    }
+    return [this.state.questions, this.state.questionLevel]
   },
 
   getQuestions(questionLevel) {
@@ -154,6 +149,7 @@ const GridListModuleContainer = React.createClass({
     this.state.questionLevel += 1;
     // setState({questionLevel: this.state.questionLevel + 1})
     console.log(this.state.questionLevel);
+    return this.state.questionLevel
   },
 
   getResult(answer_1, answer_2, answer_3) {
@@ -184,7 +180,7 @@ const GridListModuleContainer = React.createClass({
 
   render() {
     return (
-      <Button increaseQuestionLevel={this.increaseQuestionLevel} text={this.state.questionLevel.toString()} />
+      <GridListModule changeLevel={this.handleNextLevelClick()} increaseQuestionLevel={this.increaseQuestionLevel} questionLevel={this.state.questionLevel} questions={this.state.questions} />
     )  
   }
 })
