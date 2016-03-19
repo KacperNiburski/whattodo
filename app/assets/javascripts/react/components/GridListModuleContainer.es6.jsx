@@ -130,19 +130,26 @@ const GridListModuleContainer = React.createClass({
     }
   },
 
-  handleNextLevelClick: function(key) {
-    let answer;
+  handleNextLevelClick(answer) {
+    console.log("changing level")
 
     this.changeLevel(this.state.questionLevel, answer);
-    this.state.questionLevel += 1;
+    // this.state.questionLevel += 1;
     this.state.questions = this.getQuestions(this.state.questionLevel)
 
     return [this.state.questions, this.state.questionLevel]
   },
 
   getQuestions(questionLevel) {
-    let questionString = questionLevel.toString();
-    this.state.questions = questionsSet[questionString]["data"]
+    this.state.questions = questionsSet[questionLevel]["data"]
+  },
+
+  _getQuestionLevel() {
+    return this.state.questionLevel
+  },
+
+  _getQuestions() {
+    return questionsSet[this.state.questionLevel]["data"]
   },
 
   increaseQuestionLevel() {
@@ -180,7 +187,7 @@ const GridListModuleContainer = React.createClass({
 
   render() {
     return (
-      <GridListModule changeLevel={this.handleNextLevelClick()} increaseQuestionLevel={this.increaseQuestionLevel} questionLevel={this.state.questionLevel} questions={this.state.questions} />
+      <GridListModule getQuestions={this._getQuestions} getQuestionLevel={this._getQuestionLevel} questions={this.state.questions} changeLevel={this.handleNextLevelClick} increaseQuestionLevel={this.increaseQuestionLevel} questionLevel={this.state.questionLevel} />
     )  
   }
 })

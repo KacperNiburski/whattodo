@@ -18,26 +18,26 @@ const GridListModule = React.createClass({
   increaseQuestionLevelDummy() { 
     newQuestionLevel = this.props.increaseQuestionLevel();
     this.setState({questionLevel: newQuestionLevel})
-
   },
 
-  switchQuestions() {
+  switchQuestions(event) {
     let answer;
-    key = 1;
+    let text = event.target.textContent
 
     if (this.state.questions !== undefined ) {      
       this.state.questions.filter(function(_question, _index) {
-        if (_question.key == key) {
+        if (_question.title === text) {
           answer = _question
         }
       })
     }
 
-    newAttrs = this.props.handeNextLevelClick(key);
-    newQuestionLevel = newAttrs[1]
-    newQuestions = newAttrs[0]
-    this.setState({questionLevel: newQuestionLevel, questions: newQuestions})
+    this.props.changeLevel(answer);
 
+    newQuestionLevel = this.props.getQuestionLevel()
+    newQuestions = this.props.getQuestions()
+
+    this.setState({questionLevel: newQuestionLevel, questions: newQuestions})
   },
 
   render() {
@@ -45,21 +45,15 @@ const GridListModule = React.createClass({
       <div style={styles.root}>
         <h1>Increase Level: {this.state.questionLevel}</h1>
         <a onClick={this.increaseQuestionLevelDummy}>Increase level </a>
-        <GridList
-          cellHeight={200}
-          style={styles.gridList}
-        >
-          {this.state.questions.map(tile => (
-            <GridTile
-              key={tile.key}
-              title={tile.title}
-              subtitle={<span>by <b>{tile.author}</b></span>}
-              actionIcon={<IconButton onClick={this.switchQuestions}><StarBorder color="white"/></IconButton>}              
-            >
-              <img src={tile.img} />
-            </GridTile>
+        <div className="grid-list">
+          {this.state.questions.map(question => (
+            <a ref={question.key} key={question.key} className="clickable" onClick={this.switchQuestions}> 
+              <div className="grid-item"> 
+                {question.title} - {question.author} 
+              </div>
+            </a> 
           ))}
-        </GridList>
+        </div>
       </div>
     )  
   }
