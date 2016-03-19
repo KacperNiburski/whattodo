@@ -126,7 +126,7 @@ const GridListModuleContainer = React.createClass({
       answer_1: '',
       answer_2: '',
       answer_3: '',
-      result: []
+      result: undefined
     }
   },
 
@@ -134,8 +134,10 @@ const GridListModuleContainer = React.createClass({
     console.log("changing level")
 
     this.changeLevel(this.state.questionLevel, answer);
-    // this.state.questionLevel += 1;
-    this.state.questions = this.getQuestions(this.state.questionLevel)
+    
+    if (this.state.questionLevel <= 3) {      
+      this.state.questions = this.getQuestions(this.state.questionLevel)
+    }
 
     return [this.state.questions, this.state.questionLevel]
   },
@@ -159,12 +161,22 @@ const GridListModuleContainer = React.createClass({
     return this.state.questionLevel
   },
 
-  getResult(answer_1, answer_2, answer_3) {
-    let url = `/get_rating/${answer_1}/${answer_2}/${answer_3}`;
-    $.get(url, function(result, error) {
-      if (error) return;
-      this.state.result = result
-    });
+  getResult(answer_1, answer_2, answer_3) {    
+    let url = `/api/v1/get_rating/${answer_1.title}/${answer_2.title}/${answer_3.title}`;
+
+    // $.get(url, function(result, error) {      
+    //   if (error) return;
+    //   this.state.result = result
+    // });
+    
+    this.state.result = {"events": 
+      [
+        {"ruby_id": 1, "name": "Dance dance", "location": 'Here', "price": "10"},
+        {"ruby_id": 2, "name": "Dog Walk", "location": 'King Street', "price": "10"}
+      ]
+    }
+
+    // want to push out new component
   },
 
   changeLevel(questionLevel, answer) {
@@ -176,8 +188,8 @@ const GridListModuleContainer = React.createClass({
         this.state.answer_2 = answer;
         break;
       case 3:
-        this.state.answer_3 = answer;
-        this.getResult(answer_1, answer_2, answer_3);
+        this.state.answer_3 = answer;        
+        this.getResult(this.state.answer_1, this.state.answer_2, this.state.answer_3);
         break;
 
     }
@@ -186,8 +198,16 @@ const GridListModuleContainer = React.createClass({
   },
 
   render() {
+    let showCurrently;
+    if (this.state.result === undefined) {
+      showCurrently = <GridListModule getQuestions={this._getQuestions} getQuestionLevel={this._getQuestionLevel} questions={this.state.questions} changeLevel={this.handleNextLevelClick} increaseQuestionLevel={this.increaseQuestionLevel} questionLevel={this.state.questionLevel} />
+    } else {
+      showCurrently = <Results questions={this.state.questions} results={this.state.results} />
+    }
     return (
-      <GridListModule getQuestions={this._getQuestions} getQuestionLevel={this._getQuestionLevel} questions={this.state.questions} changeLevel={this.handleNextLevelClick} increaseQuestionLevel={this.increaseQuestionLevel} questionLevel={this.state.questionLevel} />
+      <div>
+        {showCurrently}
+      </div>
     )  
   }
 })

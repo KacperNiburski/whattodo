@@ -22,8 +22,7 @@ const GridListModule = React.createClass({
 
   switchQuestions(event) {
     let answer;
-    let text = event.target.textContent
-
+    let text = event.currentTarget.text.split('-')[0].replace(/\s/, '')
     if (this.state.questions !== undefined ) {      
       this.state.questions.filter(function(_question, _index) {
         if (_question.title === text) {
@@ -33,11 +32,14 @@ const GridListModule = React.createClass({
     }
 
     this.props.changeLevel(answer);
-
     newQuestionLevel = this.props.getQuestionLevel()
-    newQuestions = this.props.getQuestions()
-
-    this.setState({questionLevel: newQuestionLevel, questions: newQuestions})
+    console.log(newQuestionLevel)
+    if (newQuestionLevel > 3) {
+      console.log("Not setting")
+    } else {
+      newQuestions = this.props.getQuestions()
+      this.setState({questionLevel: newQuestionLevel, questions: newQuestions})      
+    }
   },
 
   render() {
