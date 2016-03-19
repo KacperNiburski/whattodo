@@ -12,6 +12,7 @@ const GridListModule = React.createClass({
     return {
       questionLevel: this.props.questionLevel,
       questions: this.props.questions,
+      result: undefined
     }
   },
 
@@ -36,6 +37,8 @@ const GridListModule = React.createClass({
     console.log(newQuestionLevel)
     if (newQuestionLevel > 3) {
       console.log("Not setting")
+      results = this.props.getResults()
+      this.setState({result: results})
     } else {
       newQuestions = this.props.getQuestions()
       this.setState({questionLevel: newQuestionLevel, questions: newQuestions})      
@@ -43,19 +46,15 @@ const GridListModule = React.createClass({
   },
 
   render() {
+    let showCurrently;
+    if (this.state.result === undefined) {
+      showCurrently = <Questions increaseQuestionLevelDummy={this.increaseQuestionLevelDummy} questionLevel={this.state.questionLevel} questions={this.state.questions} switchQuestions={this.switchQuestions}/>
+    } else {
+      showCurrently = <Results questions={this.state.questions} results={this.state.results} />
+    }
     return (
       <div style={styles.root}>
-        <h1>Increase Level: {this.state.questionLevel}</h1>
-        <a onClick={this.increaseQuestionLevelDummy}>Increase level </a>
-        <div className="grid-list">
-          {this.state.questions.map(question => (
-            <a ref={question.key} key={question.key} className="clickable" onClick={this.switchQuestions}> 
-              <div className="grid-item"> 
-                {question.title} - {question.author} 
-              </div>
-            </a> 
-          ))}
-        </div>
+        {showCurrently}
       </div>
     )  
   }

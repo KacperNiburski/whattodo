@@ -154,6 +154,10 @@ const GridListModuleContainer = React.createClass({
     return questionsSet[this.state.questionLevel]["data"]
   },
 
+  _getResults() {
+    return this.state.result
+  },
+
   increaseQuestionLevel() {
     this.state.questionLevel += 1;
     // setState({questionLevel: this.state.questionLevel + 1})
@@ -198,15 +202,10 @@ const GridListModuleContainer = React.createClass({
   },
 
   render() {
-    let showCurrently;
-    if (this.state.result === undefined) {
-      showCurrently = <GridListModule getQuestions={this._getQuestions} getQuestionLevel={this._getQuestionLevel} questions={this.state.questions} changeLevel={this.handleNextLevelClick} increaseQuestionLevel={this.increaseQuestionLevel} questionLevel={this.state.questionLevel} />
-    } else {
-      showCurrently = <Results questions={this.state.questions} results={this.state.results} />
-    }
+    
     return (
       <div>
-        {showCurrently}
+        <GridListModule getQuestions={this._getQuestions} getQuestionLevel={this._getQuestionLevel} questions={this.state.questions} changeLevel={this.handleNextLevelClick} increaseQuestionLevel={this.increaseQuestionLevel} getResults={this._getResults} questionLevel={this.state.questionLevel} />
       </div>
     )  
   }

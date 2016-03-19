@@ -9,9 +9,8 @@ var styles = {
 
 const Results = React.createClass({
   getInitialState: function() {
-    debugger
     return {
-      result: this.props.result,
+      result: this.props.result['events'],
       questions: this.props.questions,
     }
   },
@@ -45,10 +44,10 @@ const Results = React.createClass({
       <div style={styles.root}>
         <a onClick={this.increaseQuestionLevelDummy}>Increase level </a>
         <div className="grid-list">
-          {this.state.questions.map(question => (
-            <a ref={question.key} key={question.key} className="clickable" onClick={this.switchQuestions}> 
+          {this.state.result.map(result => (
+            <a ref={result.ruby_id} key={result.ruby_id} className="clickable" onClick={this.showResult}> 
               <div className="grid-item"> 
-                {question.title} - {question.author} 
+                {result.name} - {result.location} - {result.location}
               </div>
             </a> 
           ))}
