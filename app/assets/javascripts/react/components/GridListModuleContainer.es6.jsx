@@ -167,19 +167,13 @@ const GridListModuleContainer = React.createClass({
 
   getResult(answer_1, answer_2, answer_3) {    
     let url = `/api/v1/get_rating/${answer_1.title}/${answer_2.title}/${answer_3.title}`;
-    // $.get(url, function(result, error) {      
-    //   if (error) return;
-    //   this.state.result = result
-    // });
-    
-    this.state.result = {"events": 
-      [
-        {"ruby_id": 1, "name": "Dance dance", "location": 'Here', "price": "10"},
-        {"ruby_id": 2, "name": "Dog Walk", "location": 'King Street', "price": "10"}
-      ]
-    }
-
-    // want to push out new component
+    var component = this
+    $.get(url, function(result, error) {
+      // component.state.result = result['events']
+      component.setState({result: result['events']})
+      debugger
+      return result["events"]
+    });
   },
 
   changeLevel(questionLevel, answer) {
@@ -204,7 +198,7 @@ const GridListModuleContainer = React.createClass({
     
     return (
       <div>
-        <GridListModule getQuestions={this._getQuestions} getQuestionLevel={this._getQuestionLevel} questions={this.state.questions} changeLevel={this.handleNextLevelClick} increaseQuestionLevel={this.increaseQuestionLevel} getResults={this._getResults} questionLevel={this.state.questionLevel} />
+        <GridListModule result={this.state.result} getQuestions={this._getQuestions} getQuestionLevel={this._getQuestionLevel} questions={this.state.questions} changeLevel={this.handleNextLevelClick} increaseQuestionLevel={this.increaseQuestionLevel} getResults={this._getResults} questionLevel={this.state.questionLevel} />
       </div>
     )  
   }
