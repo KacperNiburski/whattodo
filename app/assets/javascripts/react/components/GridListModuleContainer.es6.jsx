@@ -168,12 +168,29 @@ const GridListModuleContainer = React.createClass({
   getResult(answer_1, answer_2, answer_3) {    
     let url = `/api/v1/get_rating/${answer_1.title}/${answer_2.title}/${answer_3.title}`;
     var component = this
-    $.get(url, function(result, error) {
-      // component.state.result = result['events']
+    $.get(url, function(result, error) {    
       component.setState({result: result['events']})
-      debugger
       return result["events"]
     });
+  },
+
+  tryAgain() {
+    console.log("try again in gridlistcontainer")
+    this.state.result = undefined
+    this.state.questionLevel = 1
+    this.state.questions = questionsSet["1"]["data"]
+    this.state.answer_1 = ''
+    this.state.answer_2 = ''
+    this.state.answer_3 = ''
+
+    this.setState({
+      answer_1: '',
+      answer_2: '',
+      answer_3: '',
+      result: undefined,
+      questionLevel: 1,
+      questions: questionsSet["1"]["data"]
+    })
   },
 
   changeLevel(questionLevel, answer) {
@@ -188,17 +205,16 @@ const GridListModuleContainer = React.createClass({
         this.state.answer_3 = answer;        
         this.getResult(this.state.answer_1, this.state.answer_2, this.state.answer_3);
         break;
-
     }
 
     this.state.questionLevel = this.state.questionLevel + 1;
   },
 
   render() {
-    
+
     return (
       <div>
-        <GridListModule result={this.state.result} getQuestions={this._getQuestions} getQuestionLevel={this._getQuestionLevel} questions={this.state.questions} changeLevel={this.handleNextLevelClick} increaseQuestionLevel={this.increaseQuestionLevel} getResults={this._getResults} questionLevel={this.state.questionLevel} />
+        <GridListModule tryAgain={this.tryAgain} result={this.state.result} getQuestions={this._getQuestions} getQuestionLevel={this._getQuestionLevel} questions={this.state.questions} changeLevel={this.handleNextLevelClick} increaseQuestionLevel={this.increaseQuestionLevel} getResults={this._getResults} questionLevel={this.state.questionLevel} />
       </div>
     )  
   }

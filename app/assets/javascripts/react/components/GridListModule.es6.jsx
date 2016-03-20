@@ -38,14 +38,20 @@ const GridListModule = React.createClass({
     var component = this
     if (newQuestionLevel > 3) {
       console.log("Not setting")
-      // setTimeout(function() {
-      //   console.log("test")
-      //   // result = this.props.getResults();
-      // }, 2000)
     } else {
       newQuestions = this.props.getQuestions()
       this.setState({questionLevel: newQuestionLevel, questions: newQuestions})      
     }
+  },
+
+  tryAgain() {
+    console.log("try again in gridlistmodule")
+    this.props.tryAgain();
+    newQuestionLevel = this.props.getQuestionLevel()
+    
+    newQuestions = this.props.getQuestions()
+    this.setState({questions: newQuestions, questionLevel: newQuestionLevel})
+  
   },
 
   render() {
@@ -53,7 +59,7 @@ const GridListModule = React.createClass({
     if (this.props.result === undefined) {
       showCurrently = <Questions increaseQuestionLevelDummy={this.increaseQuestionLevelDummy} questionLevel={this.state.questionLevel} questions={this.state.questions} switchQuestions={this.switchQuestions}/>
     } else {
-      showCurrently = <Results questions={this.state.questions} result={this.props.result} />
+      showCurrently = <Results tryAgain={this.tryAgain} questions={this.state.questions} result={this.props.result} />
     }
     return (
       <div style={styles.root}>
