@@ -91,4 +91,4 @@ gem 'browserify-rails'
 
 gem 'sprockets'
 gem 'sprockets-es6'
-gem 'responders', '~> 2.0'
+gem 'responders'

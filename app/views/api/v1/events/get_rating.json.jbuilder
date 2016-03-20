@@ -11,11 +11,11 @@ json.events @eventsMatched.each do |value|
   json.location jsonString['location']
   json.price jsonString['price']
   if jsonString['dayOn'] == "No start time specified" && jsonString['dayEnd'] == "No end time specified"
-    json.dayOn jsonString['dayOn'])
-    json.dayEnd jsonString['dayEnd'])
+    json.dayOn jsonString['dayOn']
+    json.dayEnd jsonString['dayEnd']
   else
-    json.dayOn jsonString['dayOn'])
-    json.dayEnd jsonString['dayEnd'])
+    json.dayOn jsonString['dayOn']
+    json.dayEnd jsonString['dayEnd']
   end
   json.latitude jsonString['latitude']
   json.longitude jsonString['longitude']

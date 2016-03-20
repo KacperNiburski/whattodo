@@ -1,4 +1,4 @@
-include Capybara::DSL
+# include Capybara::DSL
 
 require 'headless'
 require 'os'

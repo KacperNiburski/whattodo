@@ -8,6 +8,9 @@ Bundler.require(:default, Rails.env)
 
 module Whattodo
   class Application < Rails::Application
+    # Use the responders controller from the responders gem
+    config.app_generators.scaffold_controller :responders_controller
+
     I18n.config.enforce_available_locales = true
 
     config.generators do |g|

@@ -1,6 +1,6 @@
 require 'open-uri'
 require 'time'
-require 'html/sanitizer'
+# require 'html/sanitizer'
 require 'geokit'
 require 'uri'
 require_dependency 'scraper.rb'
