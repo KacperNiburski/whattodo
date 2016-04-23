@@ -29,3 +29,5 @@ DayEvents.txt
 /config/application.yml
 
 /node_modules
+output.html
+/config/secrets.yml

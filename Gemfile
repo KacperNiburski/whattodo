@@ -67,6 +67,7 @@ gem 'whenever', :require => false
 
 group :development do
   gem "better_errors"
+  gem 'brakeman', :require => false
 end
 
 gem "nokogiri"
